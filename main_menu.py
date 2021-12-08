@@ -44,5 +44,30 @@ class MainMenu:
         """Main Menu loop
         """
         while True:
-            pg.display.update()
-            pg.event.get()
+            pg.display.update()     # Refresh display
+            
+            for button in self.buttons:
+                button.draw(self.display)   # Draw button
+            
+            pos = pg.mouse.get_pos()    # Get mouse position
+            
+            for event in pg.event.get():
+                """Handle events"""
+                ev_type = event.type
+                if ev_type == pg.QUIT:      # if event was quit, exit program
+                    pg.quit()
+                    quit()
+                
+                elif ev_type == pg.MOUSEBUTTONDOWN:     # if event was mouse button down, handle press
+                    if self.buttons[0].is_over(pos):    # Handle press on PvP Button
+                        #TODO: handle press on PvP Button
+                        pass
+                    elif self.buttons[1].is_over(pos):  # Handle press on PvE Button
+                        #TODO: handle press on PvE Button
+                        pass
+                    elif self.buttons[2].is_over(pos):  # Handle press on Instructions Button
+                        #TODO: handle press on Instructions Button
+                        pass
+                    elif self.buttons[3].is_over(pos):  # Handle press on quit Button
+                        pg.quit()
+                        quit()
