@@ -87,7 +87,7 @@ class Instructions:
         # Screen Layout
         self.display = pg.display.set_mode((1200, 750), 0, 32)
             # Init Buttons
-        self.back = Button("#B8C6DB", 20, 30, 45, 45, border_radius=10, text="<", font=Consts.sub_title_font)
+        self.back = Button("#B8C6DB", 20, 30, 45, 45, border_radius=50, text="<", font=Consts.sub_title_font)
             # Init title
         self.title = Consts.main_title_font.render('Instructions', True, (0,0,0))
         self.text_rect = self.title.get_rect(center=(200, 50))
