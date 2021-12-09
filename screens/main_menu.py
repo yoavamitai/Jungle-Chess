@@ -1,6 +1,5 @@
 import pygame as pg
 from button import Button
-# from screens.instructions import Instructions
 import time
 from consts import Consts
 
