@@ -1,4 +1,4 @@
-from main_menu import MainMenu
+from screens.main_menu import MainMenu
 
 def main():
     main_menu = MainMenu()

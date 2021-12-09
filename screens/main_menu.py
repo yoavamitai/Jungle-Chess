@@ -1,7 +1,9 @@
 import pygame as pg
 from button import Button
+# from screens.instructions import Instructions
 import time
 from consts import Consts
+
 class MainMenu:
     def __init__(self) -> None:
         """Init main menu
@@ -66,8 +68,62 @@ class MainMenu:
                         #TODO: handle press on PvE Button
                         pass
                     elif self.buttons[2].is_over(pos):  # Handle press on Instructions Button
-                        #TODO: handle press on Instructions Button
-                        pass
+                        pg.display.quit()
+                        time.sleep(0.2)
+                        instructions = Instructions()
                     elif self.buttons[3].is_over(pos):  # Handle press on quit Button
                         pg.quit()
                         quit()
+                        
+                        
+class Instructions:
+    def __init__(self) -> None:
+        """Init instructions screen"""
+        
+        pg.init()
+
+        # Init Clock
+        self.clock = pg.time.Clock()
+
+        # Screen Layout
+        self.display = pg.display.set_mode((1200, 750), 0, 32)
+            # Init Buttons
+        self.back = Button("#B8C6DB", 20, 30, 45, 45, border_radius=10, text="<", font=Consts.sub_title_font)
+            # Init title
+        self.title = Consts.main_title_font.render('Instructions', True, (0,0,0))
+        self.text_rect = self.title.get_rect(center=(200, 50))
+
+            # Fill screen
+        pg.display.update()
+        time.sleep(0.01)
+        self.display.fill((235, 235, 235))
+        
+            # Draw Screen components
+        self.back.draw(self.display)
+        self.display.blit(self.title, self.text_rect)
+        
+        self.main_menu_loop()
+    
+    def main_menu_loop(self) -> None:
+        """Main Menu loop
+        """
+        while True:
+            pg.display.update()     # Refresh display
+            
+            
+            self.back.draw(self.display)   # Draw button
+            
+            pos = pg.mouse.get_pos()    # Get mouse position
+            
+            for event in pg.event.get():
+                """Handle events"""
+                ev_type = event.type
+                if ev_type == pg.QUIT:      # if event was quit, exit program
+                    pg.quit()
+                    quit()
+                
+                elif ev_type == pg.MOUSEBUTTONDOWN:     # if event was mouse button down
+                    if self.back.is_over(pos):
+                        pg.display.quit()
+                        time.sleep(0.2)
+                        main_menu = MainMenu()
