@@ -1,7 +1,10 @@
+from __future__ import annotations
+
 import pygame as pg
 from pygame import time
 from assets.button import Button
 import time
+from assets.consts import Consts
 
 class View:
     def __init__(self) -> None:
@@ -42,4 +45,23 @@ class View:
             y = starting_y + j * (self.BLOCK_SIZE + self.GAP)
             for i in range(self.COLS):
                 x = starting_x + i * (self.BLOCK_SIZE + self.GAP)
-                pg.draw.rect(self.display, (0, 0, 0), (x, y, self.BLOCK_SIZE, self.BLOCK_SIZE), border_radius= 10)
+                pg.draw.rect(self.display, 
+                self.choose_block_color(i, j), 
+                (x, y, self.BLOCK_SIZE, self.BLOCK_SIZE), border_radius= 10)
+
+    def choose_block_color(self, i: float, j: float) -> tuple[int, int, int]:
+
+        #Den Color
+        if i == 3 and (j == 0 or j == self.ROWS - 1):
+            return Consts.den_color
+        
+        #Trap Color
+        if ((i == 2 or i == 4) and (j == 0 or j == self.ROWS - 1)) or \
+            ((i == self.COLS // 2) and (j == 1 or j == self.ROWS - 2)):
+            return Consts.trap_color
+        
+        #River Color
+        if (i % 3 != 0) and (j > 2 and j < 6):
+            return Consts.river_color
+        
+        return Consts.grass_color
