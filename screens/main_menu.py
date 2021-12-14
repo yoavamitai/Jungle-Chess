@@ -1,8 +1,8 @@
 import pygame as pg
-from button import Button
+from assets.button import Button
 import time
-from consts import Consts
-
+from assets.consts import Consts
+from MVC.controller import Controller
 class MainMenu:
     def __init__(self) -> None:
         """Init main menu
@@ -61,8 +61,10 @@ class MainMenu:
                 
                 elif ev_type == pg.MOUSEBUTTONDOWN:     # if event was mouse button down, handle press
                     if self.buttons[0].is_over(pos):    # Handle press on PvP Button
-                        #TODO: handle press on PvP Button
-                        pass
+                        pg.display.quit()
+                        time.sleep(0.2)
+                        game = Controller(False)
+                        
                     elif self.buttons[1].is_over(pos):  # Handle press on PvE Button
                         #TODO: handle press on PvE Button
                         pass
