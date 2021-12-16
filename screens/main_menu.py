@@ -3,6 +3,7 @@ from assets.button import Button
 import time
 from assets.consts import Consts
 from MVC.controller import Controller
+
 class MainMenu:
     def __init__(self) -> None:
         """Init main menu
@@ -27,8 +28,7 @@ class MainMenu:
         self.text_rects = [self.texts[0].get_rect(center=(200, 50)),
         self.texts[1].get_rect(center=(260, 85)),
         self.texts[2].get_rect(center=(290, 110))]
-
-        
+       
         
         pg.display.update()
         time.sleep(0.01)
@@ -66,8 +66,9 @@ class MainMenu:
                         game = Controller(False)
                         
                     elif self.buttons[1].is_over(pos):  # Handle press on PvE Button
-                        #TODO: handle press on PvE Button
-                        pass
+                        pg.display.quit()
+                        time.sleep(0.2)
+                        game = Controller(True)
                     elif self.buttons[2].is_over(pos):  # Handle press on Instructions Button
                         pg.display.quit()
                         time.sleep(0.2)

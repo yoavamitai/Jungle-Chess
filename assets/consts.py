@@ -10,3 +10,8 @@ class Consts:
     river_color = (69, 105, 144)
     trap_color = (173, 52, 62)
     den_color = (242, 175, 41)
+
+    ROWS = 9
+    COLS = 7
+    BLOCK_SIZE = 65
+    GAP = 10

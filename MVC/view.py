@@ -1,5 +1,6 @@
 from __future__ import annotations
-
+from os import cpu_count
+import numpy as np
 import pygame as pg
 from pygame import time
 from assets.button import Button
@@ -18,46 +19,58 @@ class View:
         time.sleep(0.01)
         self.display.fill((235,235,235))
 
-
-        #init view consts
-        self.ROWS = 9
-        self.COLS = 7
-        self.BLOCK_SIZE = 65
-        self.GAP = 10
-        self.main_loop()
+        self.close_button = Button("#B8C6DB", 20, 30, 75, 45, border_radius=50, text='close', font=Consts.button_font)
+        
+        #self.main_loop()
+        
     
     def main_loop(self) -> None:
         """Testing inf loop"""
         while True:
             time.sleep(0.1)
-            self.draw_board()
-            pg.display.update()
 
-    
-    def draw_board(self):
-        width = self.COLS * self.BLOCK_SIZE + (self.COLS - 1) * self.GAP
-        height = self.ROWS * self.BLOCK_SIZE + (self.ROWS - 1) * self.GAP
+            self.draw_board()
+            
+            
+    def draw_board(self, pieces):
+        pg.display.update()
+        self.close_button.draw(self.display)
+
+        # Draw borad
+        width = Consts.COLS * Consts.BLOCK_SIZE + (Consts.COLS - 1) * Consts.GAP
+        height = Consts.ROWS * Consts.BLOCK_SIZE + (Consts.ROWS - 1) * Consts.GAP
 
         starting_x = 1200 * .5 - width * .5
         starting_y = 750 * .5 - height * .5
 
-        for j in range(self.ROWS):
-            y = starting_y + j * (self.BLOCK_SIZE + self.GAP)
-            for i in range(self.COLS):
-                x = starting_x + i * (self.BLOCK_SIZE + self.GAP)
+        for j in range(Consts.ROWS):
+            y = starting_y + j * (Consts.BLOCK_SIZE + Consts.GAP)
+            for i in range(Consts.COLS):
+                x = starting_x + i * (Consts.BLOCK_SIZE + Consts.GAP)
                 pg.draw.rect(self.display, 
                 self.choose_block_color(i, j), 
-                (x, y, self.BLOCK_SIZE, self.BLOCK_SIZE), border_radius= 10)
+                (x, y, Consts.BLOCK_SIZE, Consts.BLOCK_SIZE), border_radius= 10)
+        
+        # Draw pieces
+        for j in pieces:
+            y = starting_y + j * (Consts.BLOCK_SIZE + Consts.GAP)
+            for i in j:
+                if pieces[j,i] is not 0:
+                    x = starting_x + i * (Consts.BLOCK_SIZE + Consts.GAP)
+                    pg.draw.circle(self.display,
+                    (164, 36, 59) if pieces[j,i] < 0 else (99, 32, 238), 
+                    (x + Consts.BLOCK_SIZE // 2, y + Consts.BLOCK_SIZE // 2), 
+                    Consts.BLOCK_SIZE)
 
     def choose_block_color(self, i: float, j: float) -> tuple[int, int, int]:
 
         #Den Color
-        if i == 3 and (j == 0 or j == self.ROWS - 1):
+        if i == 3 and (j == 0 or j == Consts.ROWS - 1):
             return Consts.den_color
         
         #Trap Color
-        if ((i == 2 or i == 4) and (j == 0 or j == self.ROWS - 1)) or \
-            ((i == self.COLS // 2) and (j == 1 or j == self.ROWS - 2)):
+        if ((i == 2 or i == 4) and (j == 0 or j == Consts.ROWS - 1)) or \
+            ((i == Consts.COLS // 2) and (j == 1 or j == Consts.ROWS - 2)):
             return Consts.trap_color
         
         #River Color
