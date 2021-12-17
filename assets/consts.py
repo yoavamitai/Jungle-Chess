@@ -13,5 +13,5 @@ class Consts:
 
     ROWS = 9
     COLS = 7
-    BLOCK_SIZE = 65
-    GAP = 10
+    BLOCK_SIZE = 50
+    GAP = 5

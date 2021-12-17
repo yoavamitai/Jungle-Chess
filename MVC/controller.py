@@ -11,4 +11,4 @@ class Controller:
     def main_loop(self):
         while True:
             time.sleep(0.01)
-            self.view.draw_board(self.model.board)
+            self.view.draw_board(self.model.game_board)

@@ -13,7 +13,7 @@ class View:
 
         pg.init()
         self.clock = pg.time.Clock() # Init Clock
-        self.display = pg.display.set_mode((1200, 750), 0, 32)
+        self.display = pg.display.set_mode((1000, 550), 0, 32)
 
         pg.display.update()
         time.sleep(0.01)
@@ -40,8 +40,8 @@ class View:
         width = Consts.COLS * Consts.BLOCK_SIZE + (Consts.COLS - 1) * Consts.GAP
         height = Consts.ROWS * Consts.BLOCK_SIZE + (Consts.ROWS - 1) * Consts.GAP
 
-        starting_x = 1200 * .5 - width * .5
-        starting_y = 750 * .5 - height * .5
+        starting_x = 1000 * .5 - width * .5
+        starting_y = 550 * .5 - height * .5
 
         for j in range(Consts.ROWS):
             y = starting_y + j * (Consts.BLOCK_SIZE + Consts.GAP)
@@ -51,16 +51,15 @@ class View:
                 self.choose_block_color(i, j), 
                 (x, y, Consts.BLOCK_SIZE, Consts.BLOCK_SIZE), border_radius= 10)
         
+        
         # Draw pieces
-        for j in pieces:
+        for j in range(len(pieces)):
             y = starting_y + j * (Consts.BLOCK_SIZE + Consts.GAP)
-            for i in j:
-                if pieces[j,i] is not 0:
-                    x = starting_x + i * (Consts.BLOCK_SIZE + Consts.GAP)
-                    pg.draw.circle(self.display,
-                    (164, 36, 59) if pieces[j,i] < 0 else (99, 32, 238), 
-                    (x + Consts.BLOCK_SIZE // 2, y + Consts.BLOCK_SIZE // 2), 
-                    Consts.BLOCK_SIZE)
+            for i in range(len(pieces[i])):
+                x = starting_x + i * (Consts.BLOCK_SIZE + Consts.GAP)
+                if pieces[j, i] != 0:
+                    pg.draw.circle(self.display, (0,0,0),
+                                   (x + Consts.BLOCK_SIZE // 2, y + Consts.BLOCK_SIZE // 2), Consts.BLOCK_SIZE // 2.25)
 
     def choose_block_color(self, i: float, j: float) -> tuple[int, int, int]:
 

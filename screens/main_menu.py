@@ -14,11 +14,11 @@ class MainMenu:
         self.clock = pg.time.Clock()
 
         # Screen Layout
-        self.display = pg.display.set_mode((1200, 750), 0, 32)
-        self.pvp_button = Button("#B8C6DB", 60, 150, 200, 100, border_radius=10, text="Play PvP", font=Consts.button_font)
-        self.pve_button = Button("#B8C6DB", 60, 300, 200, 100, border_radius=10, text="Play PvE", font=Consts.button_font)
-        self.instuctions_button = Button("#B8C6DB", 60, 450, 200, 100, border_radius=10, text="Instructions", font=Consts.button_font)
-        self.quit_button = Button("#B8C6DB", 60, 600, 200, 100, border_radius=10, text="Quit", font=Consts.button_font)
+        self.display = pg.display.set_mode((1000, 550), 0, 32)
+        self.pvp_button = Button("#B8C6DB", 60, 125, 150, 75, border_radius=10, text="Play PvP", font=Consts.button_font)
+        self.pve_button = Button("#B8C6DB", 60, 225, 150, 75, border_radius=10, text="Play PvE", font=Consts.button_font)
+        self.instuctions_button = Button("#B8C6DB", 60, 325, 150, 75, border_radius=10, text="Instructions", font=Consts.button_font)
+        self.quit_button = Button("#B8C6DB", 60, 425, 150, 75, border_radius=10, text="Quit", font=Consts.button_font)
         self.buttons = [self.pvp_button, self.pve_button, self.instuctions_button, self.quit_button]
         
         self.texts = [Consts.main_title_font.render('Dou Shou Qi', True, (0,0,0)),
