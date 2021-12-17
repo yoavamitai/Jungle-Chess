@@ -7,6 +7,7 @@ from assets.button import Button
 import time
 from assets.consts import Consts
 
+
 class View:
     def __init__(self) -> None:
         """Init view component"""
@@ -52,15 +53,20 @@ class View:
                 (x, y, Consts.BLOCK_SIZE, Consts.BLOCK_SIZE), border_radius= 10)
         
         
-        # Draw pieces
+        # Draw game pieces
         for j in range(len(pieces)):
-            y = starting_y + j * (Consts.BLOCK_SIZE + Consts.GAP)
+            y = starting_y + j * (Consts.BLOCK_SIZE + Consts.GAP)   # calculate piece y position
             for i in range(len(pieces[i])):
-                x = starting_x + i * (Consts.BLOCK_SIZE + Consts.GAP)
-                if pieces[j, i] != 0:
-                    pg.draw.circle(self.display,
+                x = starting_x + i * (Consts.BLOCK_SIZE + Consts.GAP)   # calculate piece x position
+                if pieces[j, i] != 0:   # check if element in array is not null (null == 0), but a game piece
+                    # draw game piece circle
+                    piece = pg.draw.circle(self.display,
                                    (208, 0, 0) if pieces[j,i] < 0 else (0, 180, 216),
                                    (x + Consts.BLOCK_SIZE // 2, y + Consts.BLOCK_SIZE // 2), Consts.BLOCK_SIZE // 2.25)
+                    
+                    piece_text = Consts.button_font.render(str(abs(pieces[j, i])), True, (235, 235, 235)) # render game piece text
+                    self.display.blit(piece_text, piece_text.get_rect(center=piece.center)) # blit game piece text to the center of the piece circle
+                    
 
     def choose_block_color(self, i: float, j: float) -> tuple[int, int, int]:
 
