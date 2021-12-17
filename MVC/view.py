@@ -58,7 +58,8 @@ class View:
             for i in range(len(pieces[i])):
                 x = starting_x + i * (Consts.BLOCK_SIZE + Consts.GAP)
                 if pieces[j, i] != 0:
-                    pg.draw.circle(self.display, (0,0,0),
+                    pg.draw.circle(self.display,
+                                   (208, 0, 0) if pieces[j,i] < 0 else (0, 180, 216),
                                    (x + Consts.BLOCK_SIZE // 2, y + Consts.BLOCK_SIZE // 2), Consts.BLOCK_SIZE // 2.25)
 
     def choose_block_color(self, i: float, j: float) -> tuple[int, int, int]:
