@@ -21,9 +21,9 @@ class MainMenu:
         self.quit_button = Button("#B8C6DB", 60, 425, 150, 75, border_radius=10, text="Quit", font=Consts.button_font)
         self.buttons = [self.pvp_button, self.pve_button, self.instuctions_button, self.quit_button]
         
-        self.texts = [Consts.main_title_font.render('Dou Shou Qi', True, (0,0,0)),
-        Consts.sub_title_font.render('Jungle Chess', True, (0,0,0)),
-        Consts.label_font.render('by Yoav Amitai', True, (0,0,0))]
+        self.texts = [Consts.main_title_font.render('Dou Shou Qi', True, 10),
+        Consts.sub_title_font.render('Jungle Chess', True, 10),
+        Consts.label_font.render('by Yoav Amitai', True, 10)]
 
         self.text_rects = [self.texts[0].get_rect(center=(200, 50)),
         self.texts[1].get_rect(center=(260, 85)),

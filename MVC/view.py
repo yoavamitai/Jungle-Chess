@@ -20,18 +20,7 @@ class View:
         time.sleep(0.01)
         self.display.fill((235,235,235))
 
-        self.close_button = Button("#B8C6DB", 20, 30, 75, 45, border_radius=50, text='close', font=Consts.button_font)
-        
-        #self.main_loop()
-        
-    
-    def main_loop(self) -> None:
-        """Testing inf loop"""
-        while True:
-            time.sleep(0.1)
-
-            self.draw_board()
-            
+        self.close_button = Button("#B8C6DB", 20, 30, 75, 45, border_radius=50, text='close', font=Consts.button_font)            
             
     def draw_board(self, pieces):
         pg.display.update()
