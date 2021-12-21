@@ -87,3 +87,31 @@ class View:
             return Consts.river_color
         
         return Consts.grass_color
+
+    def mouse_to_board(self, pos):
+        """Convert mouse position of type tuple(x, y) to tuple(column, row) on board.
+        if the mouse click position is not on the board, return None.
+
+        Args:
+            pos (tuple(int, int)): mouse position on screen
+
+        Returns:
+            tuple(int, int): position of mouse on the board, or None if the mouse is not on the board.
+        """
+        width = Consts.COLS * Consts.BLOCK_SIZE + (Consts.COLS - 1) * Consts.GAP    # Board width  
+        height = Consts.ROWS * Consts.BLOCK_SIZE + (Consts.ROWS - 1) * Consts.GAP   # Board height 
+
+        starting_x = 1000 * .5 - width * .5     # Board starting X position
+        starting_y = 550 * .5 - height * .5     # Board starting Y position
+
+        x = (pos[0] - starting_x) / (Consts.BLOCK_SIZE + Consts.GAP)    # Board X position (column)
+        y = (pos[1] - starting_y) / (Consts.BLOCK_SIZE + Consts.GAP)    # Board Y position (row)
+
+        # Check if the mouse position is outside the board
+        if x < 0 or y < 0:
+            return None
+        
+        if x > (Consts.COLS - 1) or y > (Consts.ROWS - 1):
+            return None
+        
+        return (int(x),int(y))

@@ -56,4 +56,19 @@ class Controller:
         Args:
             event ([type]): event type
         """
-        pass
+        if event is pg.QUIT:
+            # Handle OS quit button click
+            pg.quit()
+            quit()
+        
+        elif event == pg.MOUSEBUTTONDOWN:
+            mouse_loc = pg.mouse.get_pos() # Get mouse position
+            if self.view.close_button.is_over(mouse_loc):
+                # Handle game quit button click
+                pg.quit
+                quit()
+            else:
+                # Handle click on screen, not on quit button
+                print(self.view.mouse_to_board(mouse_loc))
+    
+    
