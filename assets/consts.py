@@ -15,3 +15,5 @@ class Consts:
     COLS = 7
     BLOCK_SIZE = 50
     GAP = 5
+
+    FPS = 60

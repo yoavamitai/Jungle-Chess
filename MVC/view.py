@@ -45,7 +45,7 @@ class View:
         # Draw game pieces
         for j in range(len(pieces)):
             y = starting_y + j * (Consts.BLOCK_SIZE + Consts.GAP)   # calculate piece y position
-            for i in range(len(pieces[i])):
+            for i in range(len(pieces[j])):
                 x = starting_x + i * (Consts.BLOCK_SIZE + Consts.GAP)   # calculate piece x position
                 if pieces[j, i] != 0:   # check if element in array is not null (null == 0), but a game piece
                     # draw game piece circle
