@@ -88,7 +88,7 @@ class Instructions:
         self.clock = pg.time.Clock()
 
         # Screen Layout
-        self.display = pg.display.set_mode((1200, 750), 0, 32)
+        self.display = pg.display.set_mode((1000, 550), 0, 32)
             # Init Buttons
         self.back = Button("#B8C6DB", 20, 30, 45, 45, border_radius=50, text="<", font=Consts.sub_title_font)
             # Init title

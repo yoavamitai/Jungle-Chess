@@ -10,30 +10,39 @@ from assets.consts import Consts
 
 class Controller:
     def __init__(self, use_pve: bool) -> None:
-        self.model = Model()
-        self.view = View()
-        self.use_pve = use_pve
-        self.turn: int = 0  # 0 for blue, 1 for red
-        self.main_loop()
+        """Initiate the Controller component
+
+        Args:
+            use_pve (bool): should game use PvE logic or PvE logic
+        """
+        self.model = Model()    
+        self.view = View()      
+        self.use_pve = use_pve  # Should the game be played as a Player v AI (true), or Player v Player (false)
+        self.turn: int = 0      # 0 for blue, 1 for red
+        self.main_loop()        # Call for main loop
     
     def main_loop(self):
-        self.view.draw_board(self.model.game_board)
+        """Main game loop
+        """
         while True:
-            if self.use_pve:
-                self.pve_game_loop(self.turn)
+            self.view.draw_board(self.model.game_board)     # Draw the board post-turn change
+            if self.use_pve:    # Should use a PvE game logic or PvP game logic
+                self.pve_game_loop(self.turn)   # Call for PvE game logic
                 
     def pve_game_loop(self, turn: int):
+        """PvE game logic
+
+        Args:
+            turn (int): turn for blue player (0) or red player (1)
+        """
         if turn == 0:
             # turn for human player
-            self.view.draw_board(self.model.game_board)
-
             for event in pg.event.get():
                 ev_type = event.type
-                self.handle(ev_type)
+                self.handle(ev_type)    # Handle event
 
         elif turn == 1:
             # turn for AI
-            self.view.draw_board(self.model.game_board)
             time.sleep(0.2)
             # TODO: perform move
         
@@ -42,4 +51,9 @@ class Controller:
 
     
     def handle(self, event):
-            pass
+        """handle events from pygame
+
+        Args:
+            event ([type]): event type
+        """
+        pass

@@ -13,52 +13,66 @@ class View:
         """Init view component"""
 
         pg.init()
-        self.clock = pg.time.Clock() # Init Clock
-        self.display = pg.display.set_mode((1000, 550), 0, 32)
+        self.clock = pg.time.Clock()    # Init Clock
+        self.display = pg.display.set_mode((1000, 550), 0, 32)    # Initiate display
 
-        pg.display.update()
+        pg.display.update()    # Update display
         time.sleep(0.01)
-        self.display.fill((235,235,235))
+        self.display.fill((235,235,235))    # Fill display in light-grey color
 
-        self.close_button = Button("#B8C6DB", 20, 30, 75, 45, border_radius=50, text='close', font=Consts.button_font)            
+        self.close_button = Button("#B8C6DB", 20, 30, 75, 45, border_radius=50, text='close', font=Consts.button_font)    # Init close button      
             
     def draw_board(self, pieces):
-        pg.display.update()
-        self.close_button.draw(self.display)
+        """Draw the board tiles and the pieces on the board
+
+        Args:
+            pieces (ndarray): 2D array representing game pieces and their place on the board
+        """
+        pg.display.update()     # Update display
+        self.close_button.draw(self.display)    # Draw the close button
 
         # Draw borad
-        width = Consts.COLS * Consts.BLOCK_SIZE + (Consts.COLS - 1) * Consts.GAP
-        height = Consts.ROWS * Consts.BLOCK_SIZE + (Consts.ROWS - 1) * Consts.GAP
+        width = Consts.COLS * Consts.BLOCK_SIZE + (Consts.COLS - 1) * Consts.GAP    # Width of the actual board, NOT THE SCREEN
+        height = Consts.ROWS * Consts.BLOCK_SIZE + (Consts.ROWS - 1) * Consts.GAP   # Height of the actual board, NOT THE SCREEN
 
-        starting_x = 1000 * .5 - width * .5
-        starting_y = 550 * .5 - height * .5
+        starting_x = 1000 * .5 - width * .5     # X position that should be the starting position of the board
+        starting_y = 550 * .5 - height * .5     # Y position that should be the starting position of the board
 
+        # For loop to draw board tiles, using variables initiated above
         for j in range(Consts.ROWS):
-            y = starting_y + j * (Consts.BLOCK_SIZE + Consts.GAP)
+            y = starting_y + j * (Consts.BLOCK_SIZE + Consts.GAP)   # Current Y position
             for i in range(Consts.COLS):
-                x = starting_x + i * (Consts.BLOCK_SIZE + Consts.GAP)
+                x = starting_x + i * (Consts.BLOCK_SIZE + Consts.GAP)   # Current X position
                 pg.draw.rect(self.display, 
-                self.choose_block_color(i, j), 
-                (x, y, Consts.BLOCK_SIZE, Consts.BLOCK_SIZE), border_radius= 10)
+                self.choose_tile_color(i, j), 
+                (x, y, Consts.BLOCK_SIZE, Consts.BLOCK_SIZE), border_radius= 10)    # Draw tile
         
         
         # Draw game pieces
         for j in range(len(pieces)):
-            y = starting_y + j * (Consts.BLOCK_SIZE + Consts.GAP)   # calculate piece y position
+            y = starting_y + j * (Consts.BLOCK_SIZE + Consts.GAP)   # Calculate piece y position
             for i in range(len(pieces[j])):
                 x = starting_x + i * (Consts.BLOCK_SIZE + Consts.GAP)   # calculate piece x position
                 if pieces[j, i] != 0:   # check if element in array is not null (null == 0), but a game piece
                     # draw game piece circle
                     piece = pg.draw.circle(self.display,
                                    (208, 0, 0) if pieces[j,i] < 0 else (0, 180, 216),
-                                   (x + Consts.BLOCK_SIZE // 2, y + Consts.BLOCK_SIZE // 2), Consts.BLOCK_SIZE // 2.25)
+                                   (x + Consts.BLOCK_SIZE // 2, y + Consts.BLOCK_SIZE // 2), Consts.BLOCK_SIZE // 2.25)     # Draw tile
                     
                     piece_text = Consts.button_font.render(str(abs(pieces[j, i])), True, (235, 235, 235)) # render game piece text
                     self.display.blit(piece_text, piece_text.get_rect(center=piece.center)) # blit game piece text to the center of the piece circle
                     
 
-    def choose_block_color(self, i: float, j: float) -> tuple[int, int, int]:
+    def choose_tile_color(self, i: float, j: float) -> tuple[int, int, int]:
+        """choose tile color based on its position
 
+        Args:
+            i (float): Tile's column
+            j (float): Tile's Row
+
+        Returns:
+            color[int, int, int]: chosen tile color
+        """
         #Den Color
         if i == 3 and (j == 0 or j == Consts.ROWS - 1):
             return Consts.den_color
