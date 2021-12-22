@@ -107,11 +107,12 @@ class View:
         x = (pos[0] - starting_x) / (Consts.BLOCK_SIZE + Consts.GAP)    # Board X position (column)
         y = (pos[1] - starting_y) / (Consts.BLOCK_SIZE + Consts.GAP)    # Board Y position (row)
 
+        
         # Check if the mouse position is outside the board
         if x < 0 or y < 0:
             return None
         
-        if x > (Consts.COLS - 1) or y > (Consts.ROWS - 1):
+        if x > (Consts.COLS) or y > (Consts.ROWS):
             return None
         
         return (int(x),int(y))

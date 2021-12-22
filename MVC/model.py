@@ -20,19 +20,25 @@ class Model:
             position (tuple(int, int)): given position.
         """
         
-        # if value in given position is 0, meaning it is not a game piece, return None.
-        #if self.game_board[position[0], position[1]] == 0:
-            #return None
-        
         moves = []      # Generate list of possible moves
         current_rank = self.game_board[position[0], position[1]]    # Get current rank
         
         # Match case for every game piece rank.
         match current_rank:
             case 0:
-                return None
+                return None     # return None if tile is empty (0 means empty)
             case 1: # Rat
-                pass
+                if self.game_board[position[0], position[1] - 1] in (0, 8) and position[1] - 1 >= 0:
+                    moves.append(tuple(position[0], position[1] - 1))    # Append move up
+                
+                if self.game_board[position[0], position[1] + 1] in (0, 8) and position[1] < 9:
+                    moves.append(tuple(position[0], position[1] + 1))     # Append move down
+                
+                if self.game_board[position[0] - 1, position[1]] in (0, 8) and position[0] >= 0:
+                    moves.append(tuple(position[0] - 1, position[1]))     # Append move left
+                
+                if self.game_board[position[0] + 1, position[1]] in (0, 8) and position[0] < 7:
+                    moves.append(tuple(position[0] + 1, position[1]))     # Append move right
             case 2: # Cat
                 pass
             case 3: # Dog
@@ -48,4 +54,5 @@ class Model:
             case 8: # Elephant
                 pass
         
-        
+        return moves
+    
