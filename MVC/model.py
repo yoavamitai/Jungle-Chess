@@ -13,6 +13,58 @@ class Model:
                  [6, 0, 0, 0, 0, 0, 7]]
         self.game_board = np.asarray(board, dtype=int)    # Turn board var into a numpy ndarray
     
+    def is_adjacent_to_right_edge(self, pos_x):
+        return True if pos_x == 6 else False
+    
+    def is_adjacent_to_left_edge(self, pos_x):
+        return True if pos_x == 0 else False
+
+    def is_adjacent_to_upper_edge(self, pos_y):
+        return True if pos_y == 0 else False
+    
+    def is_adjacent_to_bottom_edge(self, pos_y):
+        return True if pos_y == 8 else False
+    
+    def is_adjacent_to_own_den(self, pos, rank):
+        if rank < 0:
+            if (pos[1] == 0 and pos[0] in (2, 4)) or (pos[1] == 1 and pos[0] == 3):
+                return True
+        elif rank > 0:
+            if (pos[1] == 8 and pos[0] in (2, 4)) or (pos[1] == 7 and pos[0] == 3):
+                return True
+        
+        return False
+    
+    def is_self_rank_higher(self, rank, other_rank):
+        rank = abs(rank)
+        other_rank = abs(other_rank)
+        if rank == 1:
+            if other_rank in (0,1, 8):
+                return True
+        elif rank == 2:
+            if other_rank <= 2:
+                return True
+        elif rank == 3:
+            if other_rank <= 3:
+                return True
+        elif rank == 4:
+            if other_rank <= 4:
+                return True
+        elif rank == 5:
+            if other_rank <= 5:
+                return True
+        elif rank == 6:
+            if other_rank <= 6:
+                return True
+        elif rank == 7:
+            if other_rank <= 7:
+                return True
+        elif rank == 8:
+            if other_rank in (0,2,3,4,5,6,7,8):
+                return True
+        
+        return False
+
     def get_direction_to_river(self, pos):
         directions = []
         
@@ -34,9 +86,42 @@ class Model:
         
         return directions
     
-    def check_moves_for_possible_directions(self, position, rank, directions):
+
+    def land_logic(self, pos, rank):
+        """Movement logic for land-rank game pieces: Cat, Dog, Wolf, leopard
+
+        Args:
+            pos (tuple(int, int)): current position of the game piece
+            rank (int): rank of the current game piece
+        """
+        directions_to_river = self.get_direction_to_river(pos)
+        directions = []
+        if len(directions_to_river) == 0:
+            directions.extend([(pos[0], pos[1] - 1),
+            (pos[0], pos[1] + 1),
+            (pos[0] - 1, pos[1]),
+            (pos[0] + 1, pos[1])])
+
+            for position in directions:
+                if self.is_self_rank_higher(rank, self.game_board[position[0], position[1]]) is False:
+                    directions.remove(position)
+                elif self.is_adjacent_to_right_edge(position[0]) or self.is_adjacent_to_left_edge(position[0]) or \
+                    self.is_adjacent_to_bottom_edge(position[1]) or self.is_adjacent_to_upper_edge(position[1]):
+                    directions.remove(position)
+                elif self.is_adjacent_to_own_den(position, rank):
+                    directions.remove(position)
+        
+        else:
+            pass
+
+
+
+    def land_jump_logic(self, pos, rank):
         pass
-    
+
+    def land_river_logic(self, pos, rank):
+        pass
+
     def get_possible_moves(self, position):
         """returns possible moves of a game piece for a given position.
 
@@ -47,22 +132,13 @@ class Model:
         moves = []      # Generate list of possible moves
         current_rank = self.game_board[position[0], position[1]]    # Get current rank
         
-        # Match case for every game piece rank.
+        # Use one of three logic functions for each rank: land_logic, land_jump_logic, land_river_logic.
         
         if current_rank == 0:
             return None     # return None if tile is empty (0 means empty)
+        
         elif current_rank == 1: # Rat
-            if self.game_board[position[0], position[1] - 1] in (0, 8) and position[1] - 1 >= 0:
-                moves.append(tuple(position[0], position[1] - 1))    # Append move up
-            
-            if self.game_board[position[0], position[1] + 1] in (0, 8) and position[1] < 9:
-                moves.append(tuple(position[0], position[1] + 1))     # Append move down
-            
-            if self.game_board[position[0] - 1, position[1]] in (0, 8) and position[0] >= 0:
-                moves.append(tuple(position[0] - 1, position[1]))     # Append move left
-            
-            if self.game_board[position[0] + 1, position[1]] in (0, 8) and position[0] < 7:
-                moves.append(tuple(position[0] + 1, position[1]))     # Append move right
+            pass
         elif current_rank == 2: # Cat
             pass
         elif current_rank == 3: # Dog
@@ -76,24 +152,6 @@ class Model:
         elif current_rank == 7: # Lion
             pass
         elif current_rank == 8: # Elephant
-            directions = self.get_direction_to_river(position)
-            if len(directions) == 0:
-                # Piece is not adjacent to river
-                if self.game_board[position[0], position[1] - 1] != 1 and position[1] - 1 >= 0:
-                    moves.append(tuple(position[0], position[1] - 1))   # Append move up
-                
-                if self.game_board[position[0], position[1] + 1] != 1 and position[1] + 1 < 9:
-                    moves.append(tuple(position[0], position[1] + 1))   # Append move down
-                
-                if self.game_board[position[0] - 1, position[1]] != 1 and position[0] - 1 >= 0:
-                    moves.append(tuple(position[0] - 1, position[1]))   # Append move left
-                
-                if self.game_board[position[0] + 1, position[1]] != 1 and position[0] + 1 < 7:
-                    moves.append(tuple(position[0] + 1, position[1]))   # Append move right
-            
-            else:
-                pass          
-                
-        
+            pass
         return moves
     
