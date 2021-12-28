@@ -86,7 +86,6 @@ class Model:
         
         return directions
     
-
     def land_logic(self, pos, rank):
         """Movement logic for land-rank game pieces: Cat, Dog, Wolf, Leopard, Elephant
 
@@ -132,13 +131,32 @@ class Model:
         
         return directions
 
-
-
     def land_jump_logic(self, pos, rank):
         pass
 
     def land_river_logic(self, pos, rank):
-        pass
+        """Movement logic for land-rank game pieces: Rat
+
+        Args:
+            pos (tuple(int, int)): current position of the game piece
+            rank (int): rank of the current game piece
+        """
+        directions = [(pos[0], pos[1] - 1),
+            (pos[0], pos[1] + 1),
+            (pos[0] - 1, pos[1]),
+            (pos[0] + 1, pos[1])]
+        
+        for position in directions:
+            if self.is_self_rank_higher(rank, self.game_board[position[0], position[1]]) is False:
+                directions.remove(position)
+            
+            elif self.is_adjacent_to_right_edge(position[0]) or self.is_adjacent_to_left_edge(position[0]) or \
+                    self.is_adjacent_to_bottom_edge(position[1]) or self.is_adjacent_to_upper_edge(position[1]):
+                    directions.remove(position)
+            elif self.is_on_own_den(position, rank):
+                    directions.remove(position)
+        
+        return directions
 
     def get_possible_moves(self, position):
         """returns possible moves of a game piece for a given position.
