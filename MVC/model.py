@@ -14,23 +14,23 @@ class Model:
         self.game_board = np.asarray(board, dtype=int)    # Turn board var into a numpy ndarray
     
     def is_adjacent_to_right_edge(self, pos_x):
-        return True if pos_x == 6 else False
+        return True if pos_x == 7 else False
     
     def is_adjacent_to_left_edge(self, pos_x):
-        return True if pos_x == 0 else False
+        return True if pos_x == -1 else False
 
     def is_adjacent_to_upper_edge(self, pos_y):
-        return True if pos_y == 0 else False
+        return True if pos_y == -1 else False
     
     def is_adjacent_to_bottom_edge(self, pos_y):
-        return True if pos_y == 8 else False
+        return True if pos_y == 9 else False
     
-    def is_adjacent_to_own_den(self, pos, rank):
+    def is_on_own_den(self, pos, rank):
         if rank < 0:
-            if (pos[1] == 0 and pos[0] in (2, 4)) or (pos[1] == 1 and pos[0] == 3):
+            if pos == (3, 0):
                 return True
         elif rank > 0:
-            if (pos[1] == 8 and pos[0] in (2, 4)) or (pos[1] == 7 and pos[0] == 3):
+            if pos == (3, 8):
                 return True
         
         return False
@@ -88,31 +88,49 @@ class Model:
     
 
     def land_logic(self, pos, rank):
-        """Movement logic for land-rank game pieces: Cat, Dog, Wolf, leopard
+        """Movement logic for land-rank game pieces: Cat, Dog, Wolf, Leopard, Elephant
 
         Args:
             pos (tuple(int, int)): current position of the game piece
             rank (int): rank of the current game piece
         """
         directions_to_river = self.get_direction_to_river(pos)
-        directions = []
-        if len(directions_to_river) == 0:
-            directions.extend([(pos[0], pos[1] - 1),
+        directions = [(pos[0], pos[1] - 1),
             (pos[0], pos[1] + 1),
             (pos[0] - 1, pos[1]),
-            (pos[0] + 1, pos[1])])
-
+            (pos[0] + 1, pos[1])]
+        if len(directions_to_river) == 0:
+            
             for position in directions:
                 if self.is_self_rank_higher(rank, self.game_board[position[0], position[1]]) is False:
                     directions.remove(position)
                 elif self.is_adjacent_to_right_edge(position[0]) or self.is_adjacent_to_left_edge(position[0]) or \
                     self.is_adjacent_to_bottom_edge(position[1]) or self.is_adjacent_to_upper_edge(position[1]):
                     directions.remove(position)
-                elif self.is_adjacent_to_own_den(position, rank):
+                elif self.is_on_own_den(position, rank):
                     directions.remove(position)
         
         else:
-            pass
+            for dir in directions_to_river:
+                if dir == 'u':
+                    directions.remove((pos[0], pos[1] - 1))
+                elif dir == 'd':
+                    directions.remove((pos[0], pos[1] + 1))
+                elif dir == 'l':
+                    directions.remove((pos[0] - 1, pos[1]))
+                elif dir == 'r':
+                    directions.remove((pos[0] + 1, pos[1]))
+            
+            for position in directions:
+                if self.is_self_rank_higher(rank, self.game_board[position[0], position[1]]) is False:
+                    directions.remove(position)
+                elif self.is_adjacent_to_right_edge(position[0]) or self.is_adjacent_to_left_edge(position[0]) or \
+                    self.is_adjacent_to_bottom_edge(position[1]) or self.is_adjacent_to_upper_edge(position[1]):
+                    directions.remove(position)
+                elif self.is_on_own_den(position, rank):
+                    directions.remove(position)
+        
+        return directions
 
 
 
