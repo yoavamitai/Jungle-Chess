@@ -14,18 +14,59 @@ class Model:
         self.game_board = np.asarray(board, dtype=int)    # Turn board var into a numpy ndarray
     
     def is_adjacent_to_right_edge(self, pos_x):
+        """Checks if position X is outside the right edge of the board
+
+        Args:
+            pos_x (int): Position X to check.
+
+        Returns:
+            bool: Is outside the right edge of the board
+        """
         return True if pos_x == 7 else False
     
     def is_adjacent_to_left_edge(self, pos_x):
+        """Checks if position X is outside the left edge of the board
+
+        Args:
+            pos_x (int): Position X to check.
+
+        Returns:
+            bool: Is outside the left edge of the board
+        """
         return True if pos_x == -1 else False
 
     def is_adjacent_to_upper_edge(self, pos_y):
+        """Checks if the position Y is outside the upper edge of the board
+
+        Args:
+            pos_y (int): Position Y to check.
+
+        Returns:
+            bool: Is outside the upper edge of the board
+        """
         return True if pos_y == -1 else False
     
     def is_adjacent_to_bottom_edge(self, pos_y):
+        """Checks if the position Y is outside the bottom edge of the board
+
+        Args:
+            pos_y (int): Position Y to check.
+
+        Returns:
+            bool: Is outside the bottom edge of the board
+        """
         return True if pos_y == 9 else False
     
     def is_on_own_den(self, pos, rank):
+        """Checks if the possible position of a game piece is covering its own den
+
+        Args:
+            pos (tuple(int, int)): Possible position of a game piece
+            rank (int): Rank of the game piece (Positive for blue player, negative for red player)
+
+        Returns:
+            bool: Is covering the position of its own den
+        """
         if rank < 0:
             if pos == (3, 0):
                 return True
@@ -36,6 +77,15 @@ class Model:
         return False
     
     def is_self_rank_higher(self, rank, other_rank):
+        """Compares rank and other_rank to determine if game piece with rank can eat game piece with other_rank
+
+        Args:
+            rank (int): Rank of possible eater
+            other_rank (int): Rank of eaten
+
+        Returns:
+            bool: Can rank eat other_rank
+        """
         rank = abs(rank)
         other_rank = abs(other_rank)
         if rank == 1:
@@ -132,7 +182,54 @@ class Model:
         return directions
 
     def land_jump_logic(self, pos, rank):
-        pass
+        """Movement logic for land-rank game pieces that can jump: Tiger, Lion
+
+        Args:
+            pos (tuple(int, int)): current position of the game piece
+            rank (int): rank of the current game piece
+        """
+        directions_to_river = self.get_direction_to_river(pos)
+        directions = [(pos[0], pos[1] - 1),
+            (pos[0], pos[1] + 1),
+            (pos[0] - 1, pos[1]),
+            (pos[0] + 1, pos[1])]
+        if len(directions_to_river) == 0:
+            for position in directions:
+                if self.is_self_rank_higher(rank, self.game_board[position[0], position[1]]) is False:
+                    directions.remove(position)
+                elif self.is_adjacent_to_right_edge(position[0]) or self.is_adjacent_to_left_edge(position[0]) or \
+                    self.is_adjacent_to_bottom_edge(position[1]) or self.is_adjacent_to_upper_edge(position[1]):
+                    directions.remove(position)
+                elif self.is_on_own_den(position, rank):
+                    directions.remove(position)
+        
+        else:
+            for dir in directions_to_river:
+                if dir is 'u':
+                    directions.remove((pos[0], pos[1] - 1))
+                    if self.game_board[pos[0], 3] == 0 and self.game_board[pos[0], 4] == 0 and self.game_board[pos[0], 5] == 0:
+                        if self.is_self_rank_higher(rank, self.game_board[pos[0], 2]):
+                            directions.append((pos[0], 2))
+                
+                if dir is 'd':
+                    directions.remove((pos[0], pos[1] + 1))
+                    if self.game_board[pos[0], 3] == 0 and self.game_board[pos[0], 4] == 0 and self.game_board[pos[0], 5] == 0:
+                        if self.is_self_rank_higher(rank, self.game_board[pos[0], 6]):
+                            directions.append((pos[0], 6))
+                
+                if dir is 'r':
+                    directions.remove((pos[0] - 1, pos[1]))
+                    if self.game_board[pos[0]-1, pos[1]] == 0 and self.game_board[pos[0] - 2, pos[1]] == 0:
+                        if self.is_self_rank_higher(rank, self.game_board[pos[0] - 3, pos[1]]):
+                            directions.append((pos[0] - 3, pos[1]))
+                
+                if dir is 'l':
+                    directions.remove((pos[0] + 1, pos[1]))
+                    if self.game_board[pos[0]+1, pos[1]] == 0 and self.game_board[pos[0] + 12, pos[1]] == 0:
+                        if self.is_self_rank_higher(rank, self.game_board[pos[0] + 3, pos[1]]):
+                            directions.append((pos[0] + 3, pos[1]))
+                
+        return directions
 
     def land_river_logic(self, pos, rank):
         """Movement logic for land-rank game pieces: Rat
@@ -165,7 +262,7 @@ class Model:
             position (tuple(int, int)): given position.
         """
         
-        moves = []      # Generate list of possible moves
+        moves = None      # Generate possible moves
         current_rank = self.game_board[position[0], position[1]]    # Get current rank
         
         # Use one of three logic functions for each rank: land_logic, land_jump_logic, land_river_logic.
@@ -174,20 +271,19 @@ class Model:
             return None     # return None if tile is empty (0 means empty)
         
         elif current_rank == 1: # Rat
-            pass
+            moves = self.land_river_logic(position, current_rank)
         elif current_rank == 2: # Cat
-            pass
+            moves = self.land_logic(position, current_rank)
         elif current_rank == 3: # Dog
-            pass
+            moves = self.land_logic(position, current_rank)
         elif current_rank == 4: # Wolf
-            pass
+            moves = self.land_logic(position, current_rank)
         elif current_rank == 5: # Leopard
-            pass
+            moves = self.land_logic(position, current_rank)
         elif current_rank == 6: # Tiger
-            pass
+            moves = self.land_jump_logic(position, current_rank)
         elif current_rank == 7: # Lion
-            pass
+            moves = self.land_jump_logic(position, current_rank)
         elif current_rank == 8: # Elephant
-            pass
+            moves = self.land_logic(position, current_rank)
         return moves
-    
