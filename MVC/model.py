@@ -263,27 +263,26 @@ class Model:
         """
         
         moves = None      # Generate possible moves
-        current_rank = self.game_board[position[0], position[1]]    # Get current rank
+        current_rank = self.game_board[position[1], position[0]]    # Get current rank
         
         # Use one of three logic functions for each rank: land_logic, land_jump_logic, land_river_logic.
-        
+        print(current_rank)
         if current_rank == 0:
-            return None     # return None if tile is empty (0 means empty)
-        
-        elif current_rank == 1: # Rat
+            return 'hello'     # return None if tile is empty (0 means empty)
+        elif abs(current_rank) == 1: # Rat
             moves = self.land_river_logic(position, current_rank)
-        elif current_rank == 2: # Cat
+        elif abs(current_rank) == 2: # Cat
             moves = self.land_logic(position, current_rank)
-        elif current_rank == 3: # Dog
+        elif abs(current_rank) == 3: # Dog
             moves = self.land_logic(position, current_rank)
-        elif current_rank == 4: # Wolf
+        elif abs(current_rank) == 4: # Wolf
             moves = self.land_logic(position, current_rank)
-        elif current_rank == 5: # Leopard
+        elif abs(current_rank) == 5: # Leopard
             moves = self.land_logic(position, current_rank)
-        elif current_rank == 6: # Tiger
+        elif abs(current_rank) == 6: # Tiger
             moves = self.land_jump_logic(position, current_rank)
-        elif current_rank == 7: # Lion
+        elif abs(current_rank) == 7: # Lion
             moves = self.land_jump_logic(position, current_rank)
-        elif current_rank == 8: # Elephant
+        elif abs(current_rank) == 8: # Elephant
             moves = self.land_logic(position, current_rank)
         return moves
