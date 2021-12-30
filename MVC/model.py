@@ -178,6 +178,18 @@ class Model:
         
         return moves
     
+    def land_river_logic(self, pos, rank):
+        moves = []
+        for dir in Consts.DIRECTIONS:
+            if not self.is_outside_r_edge(pos[1] + dir[1]): 
+                    if not self. is_outside_l_edge(pos[1] + dir[1]):
+                        if not self.is_outside_u_edge(pos[0] + dir[0]):
+                            if not self.is_outside_d_edge(pos[0] + dir[0]):
+                                if self.is_self_rank_higher(rank, self.game_board[pos[0] + dir[0], pos[1] + dir[1]]):
+                                    if not self.is_overlapping_own_den((pos[0] + dir[0], pos[1] + dir[1]), rank):
+                                        moves.append((pos[0] + dir[0], pos[1] + dir[1]))
+        
+        return moves
 
     def get_possible_moves(self, position):
         """returns possible moves of a game piece for a given position.
@@ -192,9 +204,8 @@ class Model:
         if current_rank == 0:
             return None
         
-        elif abs(current_rank) == 1:
-            # Rat logic
-            pass
+        elif abs(current_rank) == 1: # Rat
+            moves = self.land_river_logic(position, current_rank)
         elif abs(current_rank) == 2: # Cat
             moves = self.land_logic(position, current_rank)
         elif abs(current_rank) == 3: # Dog
