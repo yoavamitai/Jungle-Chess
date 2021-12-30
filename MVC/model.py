@@ -154,10 +154,13 @@ class Model:
         print(directions_to_river)
         if len(directions_to_river) == 0:
             for dir in Consts.DIRECTIONS:
-                if self.is_self_rank_higher(rank, self.game_board[pos[0] + dir[0], pos[1] + dir[1]]) and \
-                    (self.is_outside_r_edge(pos[1] + dir[1]) and self. is_outside_l_edge(pos[1] + dir[1]) and self.is_outside_u_edge(pos[0] + dir[0]) and self.is_outside_d_edge(pos[0] + dir[0])) is False and \
-                        self.is_overlapping_own_den((pos[0] + dir[0], pos[1] + dir[1]), rank):
-                        moves.append((pos[0] + dir[0], pos[1] + dir[1]))
+                if not self.is_outside_r_edge(pos[1] + dir[1]): 
+                    if not self. is_outside_l_edge(pos[1] + dir[1]):
+                        if not self.is_outside_u_edge(pos[0] + dir[0]):
+                            if not self.is_outside_d_edge(pos[0] + dir[0]):
+                                if self.is_self_rank_higher(rank, self.game_board[pos[0] + dir[0], pos[1] + dir[1]]):
+                                    if not self.is_overlapping_own_den((pos[0] + dir[0], pos[1] + dir[1]), rank):
+                                        moves.append((pos[0] + dir[0], pos[1] + dir[1]))
         
         else:
             DIR = Consts.DIRECTIONS.copy()
@@ -165,10 +168,13 @@ class Model:
                 DIR.remove(direction)
             
             for dir in DIR:
-                if self.is_self_rank_higher(rank, self.game_board[pos[0] + dir[0], pos[1] + dir[1]]):
-                    if not (self.is_outside_r_edge(pos[1] + dir[1]) and self. is_outside_l_edge(pos[1] + dir[1]) and self.is_outside_u_edge(pos[0] + dir[0]) and self.is_outside_d_edge(pos[0] + dir[0])):
-                        if not self.is_overlapping_own_den((pos[0] + dir[0], pos[1] + dir[1]), rank):
-                            moves.append((pos[0] + dir[0], pos[1] + dir[1]))
+                if not self.is_outside_r_edge(pos[1] + dir[1]): 
+                    if not self. is_outside_l_edge(pos[1] + dir[1]):
+                        if not self.is_outside_u_edge(pos[0] + dir[0]):
+                            if not self.is_outside_d_edge(pos[0] + dir[0]):
+                                if self.is_self_rank_higher(rank, self.game_board[pos[0] + dir[0], pos[1] + dir[1]]):
+                                    if not self.is_overlapping_own_den((pos[0] + dir[0], pos[1] + dir[1]), rank):
+                                        moves.append((pos[0] + dir[0], pos[1] + dir[1]))
         
         return moves
     
