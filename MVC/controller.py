@@ -71,7 +71,7 @@ class Controller:
                 # Handle click on screen, not on quit button
                 col, row = self.view.mouse_to_board(mouse_loc)
                 print(f'col: {col}, row: {row}')
-                print(self.model.get_possible_moves((col, row)))
+                print(self.model.get_possible_moves((row, col)))
 
     
     

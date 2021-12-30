@@ -17,3 +17,5 @@ class Consts:
     GAP = 5
 
     FPS = 60
+
+    DIRECTIONS = [(-1, 0), (1, 0), (0, -1), (0, 1)]
