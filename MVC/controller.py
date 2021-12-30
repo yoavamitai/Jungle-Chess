@@ -25,7 +25,6 @@ class Controller:
         """Main game loop
         """
         while True:
-            self.view.draw_board(self.model.game_board)     # Draw the board post-turn change
             if self.use_pve:    # Should use a PvE game logic or PvP game logic
                 self.pve_game_loop(self.turn)   # Call for PvE game logic
                 
@@ -39,14 +38,16 @@ class Controller:
             # turn for human player
             for event in pg.event.get():
                 ev_type = event.type
+                self.view.draw_board(self.model.game_board)     # Draw the board post-turn change
                 self.handle(ev_type)    # Handle event
+                
 
         elif turn == 1:
             # turn for AI
             time.sleep(0.2)
             # TODO: perform move
         
-        pg.display.update()
+        #pg.display.update()
         self.view.clock.tick(Consts.FPS)
 
     
@@ -71,7 +72,8 @@ class Controller:
                 # Handle click on screen, not on quit button
                 col, row = self.view.mouse_to_board(mouse_loc)
                 print(f'col: {col}, row: {row}')
-                print(self.model.get_possible_moves((row, col)))
+                moves = self.model.get_possible_moves((row, col))
+                self.view.draw_possible_moves(moves)
 
     
     

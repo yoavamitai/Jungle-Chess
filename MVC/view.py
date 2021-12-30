@@ -20,7 +20,8 @@ class View:
         time.sleep(0.01)
         self.display.fill((235,235,235))    # Fill display in light-grey color
 
-        self.close_button = Button("#B8C6DB", 20, 30, 75, 45, border_radius=50, text='close', font=Consts.button_font)    # Init close button      
+        self.close_button = Button("#B8C6DB", 20, 30, 75, 45, border_radius=50, text='close', font=Consts.button_font)    # Init close button
+        pg.event.set_blocked(pg.MOUSEMOTION)
             
     def draw_board(self, pieces):
         """Draw the board tiles and the pieces on the board
@@ -60,8 +61,7 @@ class View:
                                    (x + Consts.BLOCK_SIZE // 2, y + Consts.BLOCK_SIZE // 2), Consts.BLOCK_SIZE // 2.25)     # Draw tile
                     
                     piece_text = Consts.button_font.render(str(abs(pieces[j, i])), True, (235, 235, 235)) # render game piece text
-                    self.display.blit(piece_text, piece_text.get_rect(center=piece.center)) # blit game piece text to the center of the piece circle
-                    
+                    self.display.blit(piece_text, piece_text.get_rect(center=piece.center)) # blit game piece text to the center of the piece circle                 
 
     def choose_tile_color(self, i: float, j: float) -> tuple[int, int, int]:
         """choose tile color based on its position
@@ -116,3 +116,19 @@ class View:
             return None
         
         return (int(x),int(y))
+    
+    def draw_possible_moves(self, moves):
+        if moves is None:
+            return None
+        width = Consts.COLS * Consts.BLOCK_SIZE + (Consts.COLS - 1) * Consts.GAP    # Board width  
+        height = Consts.ROWS * Consts.BLOCK_SIZE + (Consts.ROWS - 1) * Consts.GAP   # Board height 
+
+        starting_x = 1000 * .5 - width * .5
+        starting_y = 550 * .5 - height * .5
+        
+        for move in moves:
+            x_pos = move[1] * (Consts.BLOCK_SIZE + Consts.GAP) + starting_x + (Consts.BLOCK_SIZE * .25)
+            y_pos = move[0] * (Consts.BLOCK_SIZE + Consts.GAP) + starting_y + (Consts.BLOCK_SIZE * .25)
+            
+            pg.draw.rect(self.display, (235,222,52,50),(x_pos, y_pos, 30, 30), border_radius=10)
+            
