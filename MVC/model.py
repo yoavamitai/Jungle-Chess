@@ -191,6 +191,43 @@ class Model:
         
         return moves
 
+    def land_jump_logic(self, pos, rank):
+        directions_to_river = self.get_directions_to_river(pos)
+        moves = []
+        if len(directions_to_river) == 0:
+            for dir in Consts.DIRECTIONS:
+                if not self.is_outside_r_edge(pos[1] + dir[1]): 
+                    if not self. is_outside_l_edge(pos[1] + dir[1]):
+                        if not self.is_outside_u_edge(pos[0] + dir[0]):
+                            if not self.is_outside_d_edge(pos[0] + dir[0]):
+                                if self.is_self_rank_higher(rank, self.game_board[pos[0] + dir[0], pos[1] + dir[1]]):
+                                    if not self.is_overlapping_own_den((pos[0] + dir[0], pos[1] + dir[1]), rank):
+                                        moves.append((pos[0] + dir[0], pos[1] + dir[1]))
+        
+        else:
+            for dir in directions_to_river:
+                if dir == (1, 0):
+                    if self.game_board[3, pos[1]] == 0 and self.game_board[4, pos[1]] == 0 and self.game_board[5, pos[1]] == 0:
+                        if self.is_self_rank_higher(rank, self.game_board[2, pos[1]]):
+                            moves.append((2, pos[1]))
+
+                if dir == (-1, 0):
+                    if self.game_board[3, pos[1]] == 0 and self.game_board[4, pos[1]] == 0 and self.game_board[5, pos[1]] == 0:
+                        if self.is_self_rank_higher(rank, self.game_board[6, pos[1]]):
+                            moves.append((6, pos[1]))
+                
+                if dir == (0, 1):
+                    if self.game_board[pos[0], pos[1] - 1] == 0 and self.game_board[pos[0], pos[1] - 2] == 0:
+                        if self.is_self_rank_higher(rank, self.game_board[pos[0], pos[1] - 3]):
+                            moves.append((pos[0], pos[1] - 3))
+                
+                if dir == (0, -1):
+                    if self.game_board[pos[0], pos[1] + 1] == 0 and self.game_board[pos[0], pos[1] + 2] == 0:
+                        if self.is_self_rank_higher(rank, self.game_board[pos[0], pos[1] + 3]):
+                            moves.append((pos[0], pos[1] + 3))
+        
+        return moves
+
     def get_possible_moves(self, position):
         """returns possible moves of a game piece for a given position.
 
@@ -215,11 +252,11 @@ class Model:
         elif abs(current_rank) == 5: # Leopard
             moves = self.land_logic(position, current_rank)
         elif abs(current_rank) == 6: # Tiger
-            #moves = self.land_jump_logic(position, current_rank)
-            pass
+            moves = self.land_jump_logic(position, current_rank)
+            
         elif abs(current_rank) == 7: # Lion
-            #moves = self.land_jump_logic(position, current_rank)
-            pass
+            moves = self.land_jump_logic(position, current_rank)
+            
         elif abs(current_rank) == 8: # Elephant
             moves = self.land_logic(position, current_rank)
         
