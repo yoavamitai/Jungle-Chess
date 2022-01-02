@@ -209,12 +209,12 @@ class Model:
             for dir in directions_to_river:
                 if dir == (1, 0):
                     if self.game_board[3, pos[1]] == 0 and self.game_board[4, pos[1]] == 0 and self.game_board[5, pos[1]] == 0:
-                        if self.game_board[2, pos[1]] <= rank:
+                        if self.is_self_rank_higher(rank, self.game_board[2, pos[1]]):
                             moves.append((2, pos[1]))
 
                 if dir == (-1, 0):
                     if self.game_board[3, pos[1]] == 0 and self.game_board[4, pos[1]] == 0 and self.game_board[5, pos[1]] == 0:
-                        if self.game_board[6, pos[1]] <= rank:
+                        if self.is_self_rank_higher(rank, self.game_board[6, pos[1]]):
                             moves.append((6, pos[1]))
                 
                 if dir == (0, 1):
