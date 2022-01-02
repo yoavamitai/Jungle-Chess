@@ -2,9 +2,6 @@ from MVC.model import Model
 from MVC.view import View
 import time
 import pygame as pg
-
-from pygame.event import Event
-
 from assets.consts import Consts
 
 
@@ -15,10 +12,12 @@ class Controller:
         Args:
             use_pve (bool): should game use PvE logic or PvE logic
         """
-        self.model = Model()    
-        self.view = View()      
+        self.model: Model = Model()    
+        self.view: View = View()      
         self.use_pve = use_pve  # Should the game be played as a Player v AI (true), or Player v Player (false)
         self.turn: int = 0      # 0 for blue, 1 for red
+        self.moves = []         # List of current moves
+        self.selected_game_piece = None
         self.main_loop()        # Call for main loop
     
     def main_loop(self):
@@ -40,6 +39,7 @@ class Controller:
                 ev_type = event.type
                 self.view.draw_board(self.model.game_board)     # Draw the board post-turn change
                 self.handle(ev_type)    # Handle event
+                
                 
 
         elif turn == 1:
@@ -70,10 +70,21 @@ class Controller:
                 quit()
             else:
                 # Handle click on screen, not on quit button
-                col, row = self.view.mouse_to_board(mouse_loc)
+                col, row = self.view.mouse_to_board(mouse_loc) # Get row and column selected
                 print(f'col: {col}, row: {row}')
-                moves = self.model.get_possible_moves((row, col))
-                self.view.draw_possible_moves(moves)
+                
+                if (row, col) in self.moves and self.selected_game_piece is not None:
+                    self.model.perform_move(self.selected_game_piece, (row, col))
+                    self.view.draw_board(self.model.game_board)
+                    self.moves = []
+                    self.selected_game_piece = None
+                    
+                else:
+                    if (self.model.game_board[row, col] > 0 and self.turn == 0) or (self.model.game_board[row, col] < 0 and self.turn == 1):
+                        self.moves = self.model.get_possible_moves((row, col))
+                        print(f'possible moves: {self.moves}')
+                        self.selected_game_piece =(row, col)
+                        self.view.draw_possible_moves(self.moves)
 
     
     

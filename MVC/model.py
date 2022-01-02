@@ -82,6 +82,8 @@ class Model:
         Returns:
             bool: Can rank eat other_rank
         """
+        if (rank_a > 0 and rank_b > 0) or (rank_a < 0 and rank_b < 0):
+            return False
         rank_a = abs(rank_a)
         rank_b = abs(rank_b)
 
@@ -136,7 +138,6 @@ class Model:
         
         # Check if piece is below the river
         if (pos[1] == 1 or pos[1] == 2 or pos[1] == 4 or pos[1] == 5) and pos[0] == 6:
-            print('below')
             directions.append((-1, 0))
         
         return directions
@@ -208,12 +209,12 @@ class Model:
             for dir in directions_to_river:
                 if dir == (1, 0):
                     if self.game_board[3, pos[1]] == 0 and self.game_board[4, pos[1]] == 0 and self.game_board[5, pos[1]] == 0:
-                        if self.is_self_rank_higher(rank, self.game_board[2, pos[1]]):
+                        if self.game_board[2, pos[1]] <= rank:
                             moves.append((2, pos[1]))
 
                 if dir == (-1, 0):
                     if self.game_board[3, pos[1]] == 0 and self.game_board[4, pos[1]] == 0 and self.game_board[5, pos[1]] == 0:
-                        if self.is_self_rank_higher(rank, self.game_board[6, pos[1]]):
+                        if self.game_board[6, pos[1]] <= rank:
                             moves.append((6, pos[1]))
                 
                 if dir == (0, 1):
@@ -253,7 +254,6 @@ class Model:
             moves = self.land_logic(position, current_rank)
         elif abs(current_rank) == 6: # Tiger
             moves = self.land_jump_logic(position, current_rank)
-            
         elif abs(current_rank) == 7: # Lion
             moves = self.land_jump_logic(position, current_rank)
             
@@ -262,3 +262,15 @@ class Model:
         
         return moves
 
+    def perform_move(self, game_piece, selected_move):
+        """Move a piece from original position to selected position.
+
+        Args:
+            game_piece (tuple(int, int)): position of the piece to move
+            selected_move (tuple(int, int)): position of selected move
+        """
+        self.game_board[selected_move[0], selected_move[1]] = self.game_board[game_piece[0], game_piece[1]]
+        self.game_board[game_piece[0], game_piece[1]] = 0
+        
+    def undo_move(self, game_piece):
+        pass
