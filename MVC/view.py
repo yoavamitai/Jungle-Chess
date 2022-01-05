@@ -1,5 +1,4 @@
 from __future__ import annotations
-from os import cpu_count
 import numpy as np
 import pygame as pg
 from pygame import time

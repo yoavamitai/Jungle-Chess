@@ -6,3 +6,9 @@ This projects aims to implement the traditional Chinese game *Dou Shou Qi* (é¬¥ç
 The project uses python libraries, such as:
  1. numPy
  2. pygame
+
+The game utilizes an MVC software design pattern:
+ 1. **model.py** stores, modifies and uses the data structures of the game - a 2D array representing the rank of the game pieces and their position on the board.
+ 2. **view.py** implements the visual representation of the game, using _pygame_ as a graphic library.
+ 3. **controller.py** manages the flow of the game, communications between the view and the model.
+
