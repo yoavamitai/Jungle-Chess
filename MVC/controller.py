@@ -15,9 +15,8 @@ class Controller:
         self.model: Model = Model()    
         self.view: View = View()      
         self.use_pve = use_pve  # Should the game be played as a Player v AI (true), or Player v Player (false)
-        self.turn: int = 0      # 0 for blue, 1 for red
-        self.moves = []         # List of current moves
-        self.selected_game_piece = None
+
+        pg.event.set_blocked(pg.MOUSEMOTION)
         self.main_loop()        # Call for main loop
     
     def main_loop(self):
@@ -25,7 +24,10 @@ class Controller:
         """
         while True:
             if self.use_pve:    # Should use a PvE game logic or PvP game logic
-                self.pve_game_loop(self.turn)   # Call for PvE game logic
+                self.pve_game_loop(self.model.turn)   # Call for PvE game logic
+            else:
+                self.pvp_game_loop(self.model.turn)
+            
                 
     def pve_game_loop(self, turn: int):
         """PvE game logic
@@ -50,7 +52,19 @@ class Controller:
         #pg.display.update()
         self.view.clock.tick(Consts.FPS)
 
-    
+    def pvp_game_loop(self, turn: int):
+        if turn == 0:
+            # Turn for blue player
+            for event in pg.event.get():
+                ev_type = event.type
+                self.view.draw_board(self.model.game_board)
+                self.handle(ev_type)
+        if turn == 1:
+            for event in pg.event.get():
+                ev_type = event.type
+                self.view.draw_board(self.model.game_board)
+                self.handle(ev_type)
+        
     def handle(self, event):
         """handle events from pygame
 
@@ -73,18 +87,19 @@ class Controller:
                 col, row = self.view.mouse_to_board(mouse_loc) # Get row and column selected
                 print(f'col: {col}, row: {row}')
                 
-                if (row, col) in self.moves and self.selected_game_piece is not None:
-                    self.model.perform_move(self.selected_game_piece, (row, col))
+                if self.model.is_choosing_current_move((row, col)):
+                    print('hello there')
+                    self.model.perform_move(self.model.selected_game_piece, (row, col))
                     self.view.draw_board(self.model.game_board)
-                    self.moves = []
-                    self.selected_game_piece = None
+                    self.model.moves = []
+                    self.model.selected_game_piece = None
+                    self.model.switch_turn()
+                    #print(self.model.turn)
                     
                 else:
-                    if (self.model.game_board[row, col] > 0 and self.turn == 0) or (self.model.game_board[row, col] < 0 and self.turn == 1):
-                        self.moves = self.model.get_possible_moves((row, col))
-                        print(f'possible moves: {self.moves}')
-                        self.selected_game_piece =(row, col)
-                        self.view.draw_possible_moves(self.moves)
-
-    
-    
+                    if self.model.is_selecting_valid_game_piece((row, col)):
+                        self.model.moves = self.model.get_possible_moves((row, col))
+                        print(f'possible moves: {self.model.moves}')
+                        self.model.selected_game_piece = (row, col)
+                        self.view.draw_possible_moves(self.model.moves)
+                        

@@ -12,6 +12,9 @@ class Model:
                  [0, 2, 0, 0, 0, 4, 0],
                  [6, 0, 0, 0, 0, 0, 7]]
         self.game_board = np.asarray(board, dtype=int)    # Turn board var into a numpy ndarray
+        self.moves = []
+        self.selected_game_piece = None
+        self.turn = 0
     
     def is_outside_r_edge(self, pos_x: int):
         """Checks if position X is outside the right edge of the board
@@ -262,15 +265,25 @@ class Model:
         
         return moves
 
-    def perform_move(self, game_piece, selected_move):
+    def is_choosing_current_move(self, pos):
+        return True if pos in self.moves and self.selected_game_piece is not None else False
+    
+    def is_selecting_valid_game_piece(self, pos):
+        return True if (self.game_board[pos[0], pos[1]] > 0 and self.turn == 0) or (self.game_board[pos[0], pos[1]] < 0 and self.turn == 1) else False
+    
+    def perform_move(self, start_place, selected_move):
         """Move a piece from original position to selected position.
 
         Args:
             game_piece (tuple(int, int)): position of the piece to move
             selected_move (tuple(int, int)): position of selected move
         """
-        self.game_board[selected_move[0], selected_move[1]] = self.game_board[game_piece[0], game_piece[1]]
-        self.game_board[game_piece[0], game_piece[1]] = 0
+        self.game_board[selected_move[0], selected_move[1]] = self.game_board[start_place[0], start_place[1]]
+        self.game_board[start_place[0], start_place[1]] = 0
         
     def undo_move(self, game_piece):
         pass
+    
+    def switch_turn(self):
+        self.turn = 0 if self.turn == 1 else 1
+    #TODO: get row & col and return if in current moves.

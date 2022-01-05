@@ -21,7 +21,7 @@ class View:
         self.display.fill((235,235,235))    # Fill display in light-grey color
 
         self.close_button = Button("#B8C6DB", 20, 30, 75, 45, border_radius=50, text='close', font=Consts.button_font)    # Init close button
-        pg.event.set_blocked(pg.MOUSEMOTION)
+        
             
     def draw_board(self, pieces):
         """Draw the board tiles and the pieces on the board
