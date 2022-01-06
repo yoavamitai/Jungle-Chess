@@ -60,12 +60,15 @@ class Controller:
                 ev_type = event.type    # Get event type
                 self.view.draw_board(self.model.game_board)    # Draw the board
                 self.handle(ev_type)    # Handle event
+                
         if turn == 1:
             # Turn for red player
             for event in pg.event.get():
                 ev_type = event.type
                 self.view.draw_board(self.model.game_board)
                 self.handle(ev_type)
+        
+        
         
     def handle(self, event):
         """handle events from pygame
@@ -94,6 +97,7 @@ class Controller:
                     self.view.draw_board(self.model.game_board)
                     self.model.moves = []
                     self.model.selected_game_piece = None
+                    self.model.is_win()
                     self.model.switch_turn()
                     self.view.switch_turn(self.model.turn)                 
                 else:

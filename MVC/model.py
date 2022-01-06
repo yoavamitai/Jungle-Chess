@@ -16,7 +16,7 @@ class Model:
         self.selected_game_piece = None
         self.turn = 0
     
-    def is_outside_r_edge(self, pos_x: int):
+    def is_outside_r_edge(self, pos_x: int) -> bool:
         """Checks if position X is outside the right edge of the board
 
         Args:
@@ -27,7 +27,7 @@ class Model:
         """
         return True if pos_x >= 7 else False
     
-    def is_outside_l_edge(self, pos_x: int):
+    def is_outside_l_edge(self, pos_x: int) -> bool:
         """Checks if the position Y is outside the upper edge of the board
 
         Args:
@@ -38,7 +38,7 @@ class Model:
         """
         return True if pos_x < 0 else False
     
-    def is_outside_u_edge(self, pos_y: int):
+    def is_outside_u_edge(self, pos_y: int) -> bool:
         """Checks if the position Y is outside the upper edge of the board
 
         Args:
@@ -49,7 +49,7 @@ class Model:
         """
         return True if pos_y < 0 else False
     
-    def is_outside_d_edge(self, pos_y: int):
+    def is_outside_d_edge(self, pos_y: int) -> bool:
         """Checks if the position Y is outside the bottom edge of the board
 
         Args:
@@ -60,7 +60,7 @@ class Model:
         """
         return True if pos_y >= 9 else False
     
-    def is_overlapping_own_den(self, pos, rank):
+    def is_overlapping_own_den(self, pos, rank: int) -> bool:
         """Checks if the possible position of a game piece is covering its own den
 
         Args:
@@ -75,7 +75,7 @@ class Model:
         
         return False
     
-    def is_self_rank_higher(self, rank_a, rank_b):
+    def is_self_rank_higher(self, rank_a: int, rank_b: int) -> bool:
         """Compares rank and other_rank to determine if game piece rank_a can eat game piece rank_b
 
         Args:
@@ -145,7 +145,7 @@ class Model:
         
         return directions
     
-    def land_logic(self, pos, rank):
+    def land_logic(self, pos, rank: int):
         """Movement logic for land-rank game pieces: Cat, Dog, Wolf, Leopard, Elephant.
 
         Args:
@@ -181,7 +181,13 @@ class Model:
         
         return moves
     
-    def land_river_logic(self, pos, rank):
+    def land_river_logic(self, pos, rank: int):
+        """Movement logic for land-river game pieces: Rat.
+
+        Args:
+            pos (tuple(int, int)): current position of the game piece
+            rank (int): rank of the current game piece.
+        """
         moves = []
         for dir in Consts.DIRECTIONS:
             if not self.is_outside_r_edge(pos[1] + dir[1]): 
@@ -194,7 +200,13 @@ class Model:
         
         return moves
 
-    def land_jump_logic(self, pos, rank):
+    def land_jump_logic(self, pos, rank: int):
+        """Movement logic for land-jump game pieces: Tiger, Lion
+
+        Args:
+            pos (tuple(int, int)): current position of the game piece
+            rank (int): rank of the current game piece.
+        """
         directions_to_river = self.get_directions_to_river(pos)
         moves = []
         if len(directions_to_river) == 0:
@@ -219,12 +231,12 @@ class Model:
                         if self.is_self_rank_higher(rank, self.game_board[6, pos[1]]):
                             moves.append((6, pos[1]))
                 
-                if dir == (0, 1):
+                if dir == (0, -1):
                     if self.game_board[pos[0], pos[1] - 1] == 0 and self.game_board[pos[0], pos[1] - 2] == 0:
                         if self.is_self_rank_higher(rank, self.game_board[pos[0], pos[1] - 3]):
                             moves.append((pos[0], pos[1] - 3))
                 
-                if dir == (0, -1):
+                if dir == (0, 1):
                     if self.game_board[pos[0], pos[1] + 1] == 0 and self.game_board[pos[0], pos[1] + 2] == 0:
                         if self.is_self_rank_higher(rank, self.game_board[pos[0], pos[1] + 3]):
                             moves.append((pos[0], pos[1] + 3))
@@ -264,13 +276,29 @@ class Model:
         
         return moves
 
-    def is_choosing_current_move(self, pos):
+    def is_choosing_current_move(self, pos) -> bool:
+        """Checks if selected position is in current moves list
+
+        Args:
+            pos (tuple(int, int)): Selected position
+
+        Returns:
+            bool: answer of the query.
+        """
         return True if pos in self.moves and self.selected_game_piece is not None else False
     
-    def is_selecting_valid_game_piece(self, pos):
+    def is_selecting_valid_game_piece(self, pos) -> bool:
+        """Check if player is clicking on a valid game piece and not on the opponent's pieces or an empty tile.
+
+        Args:
+            pos (tuple(int, int)): selected position
+
+        Returns:
+            bool: answer of query.
+        """
         return True if (self.game_board[pos[0], pos[1]] > 0 and self.turn == 0) or (self.game_board[pos[0], pos[1]] < 0 and self.turn == 1) else False
     
-    def perform_move(self, start_place, selected_move):
+    def perform_move(self, start_place, selected_move) -> None:
         """Move a piece from original position to selected position.
 
         Args:
@@ -283,6 +311,16 @@ class Model:
     def undo_move(self, game_piece):
         pass
     
-    def switch_turn(self):
+    def switch_turn(self) -> None:
+        """Switch turn from 0 (Blue) to 1 (Red) and vice versa.
+        """
         self.turn = 0 if self.turn == 1 else 1
-    #TODO: get row & col and return if in current moves.
+
+    def is_win(self):
+        # Check win for blue player
+        if self.game_board[0, 3] > 0 or (self.game_board >= 0).all():
+            print('blue win')
+        
+        # Check win for red player
+        if self.game_board[8, 3] < 0 or (self.game_board <= 0).all():
+            print('red win')
