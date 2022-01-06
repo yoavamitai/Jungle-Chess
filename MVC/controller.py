@@ -26,7 +26,7 @@ class Controller:
             if self.use_pve:    # Should use a PvE game logic or PvP game logic
                 self.pve_game_loop(self.model.turn)   # Call for PvE game logic
             else:
-                self.pvp_game_loop(self.model.turn)
+                self.pvp_game_loop(self.model.turn)   # Call for PvP game logic
             
                 
     def pve_game_loop(self, turn: int):
@@ -53,13 +53,15 @@ class Controller:
         self.view.clock.tick(Consts.FPS)
 
     def pvp_game_loop(self, turn: int):
+        self.view.draw_status()
         if turn == 0:
             # Turn for blue player
             for event in pg.event.get():
-                ev_type = event.type
-                self.view.draw_board(self.model.game_board)
-                self.handle(ev_type)
+                ev_type = event.type    # Get event type
+                self.view.draw_board(self.model.game_board)    # Draw the board
+                self.handle(ev_type)    # Handle event
         if turn == 1:
+            # Turn for red player
             for event in pg.event.get():
                 ev_type = event.type
                 self.view.draw_board(self.model.game_board)
@@ -88,14 +90,12 @@ class Controller:
                 print(f'col: {col}, row: {row}')
                 
                 if self.model.is_choosing_current_move((row, col)):
-                    print('hello there')
                     self.model.perform_move(self.model.selected_game_piece, (row, col))
                     self.view.draw_board(self.model.game_board)
                     self.model.moves = []
                     self.model.selected_game_piece = None
                     self.model.switch_turn()
-                    #print(self.model.turn)
-                    
+                    self.view.switch_turn(self.model.turn)                 
                 else:
                     if self.model.is_selecting_valid_game_piece((row, col)):
                         self.model.moves = self.model.get_possible_moves((row, col))

@@ -3,13 +3,14 @@ from assets.button import Button
 import time
 from assets.consts import Consts
 from MVC.controller import Controller
+import os
 
 class MainMenu:
     def __init__(self) -> None:
         """Init main menu
         """
         pg.init()
-
+        os.system('cls' if os.name == 'nt' else 'clear')
         # Init Clock
         self.clock = pg.time.Clock()
 

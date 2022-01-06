@@ -1,11 +1,13 @@
 # Dou Shou Qi (Jungle Chess) AI
 > By Yoav Amitai
 >
-This projects aims to implement the traditional Chinese game *Dou Shou Qi* (鬥獸棋, or Jungle Chess) using python, and adding a minimax algorithm as an opponent.
+This projects aims to implement the traditional Chinese game *Dou Shou Qi* (鬥獸棋, or Jungle Chess) using python, and adding a minimax algorithm as a basis for a computer-based opponent.
 
 The project uses python libraries, such as:
  1. numPy
  2. pygame
+
+___
 
 The game utilizes an MVC software design pattern:
  1. **model.py** stores, modifies and uses the data structures of the game - a 2D array representing the rank of the game pieces and their position on the board.

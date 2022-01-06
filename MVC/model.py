@@ -155,7 +155,6 @@ class Model:
 
         directions_to_river = self.get_directions_to_river(pos)
         moves = []
-        print(directions_to_river)
         if len(directions_to_river) == 0:
             for dir in Consts.DIRECTIONS:
                 if not self.is_outside_r_edge(pos[1] + dir[1]): 

@@ -19,7 +19,10 @@ class View:
         time.sleep(0.01)
         self.display.fill((235,235,235))    # Fill display in light-grey color
 
-        self.close_button = Button("#B8C6DB", 20, 30, 75, 45, border_radius=50, text='close', font=Consts.button_font)    # Init close button
+        self.close_button = Button("#B8C6DB", 20, 30, 75, 45, 
+                                   border_radius=50, text='close', font=Consts.button_font)    # Init close button
+        
+        self.message: str = "Blue player's turn"
         
             
     def draw_board(self, pieces):
@@ -60,7 +63,9 @@ class View:
                                    (x + Consts.BLOCK_SIZE // 2, y + Consts.BLOCK_SIZE // 2), Consts.BLOCK_SIZE // 2.25)     # Draw tile
                     
                     piece_text = Consts.button_font.render(str(abs(pieces[j, i])), True, (235, 235, 235)) # render game piece text
-                    self.display.blit(piece_text, piece_text.get_rect(center=piece.center)) # blit game piece text to the center of the piece circle                 
+                    self.display.blit(piece_text, piece_text.get_rect(center=piece.center)) # blit game piece text to the center of the piece circle
+        
+                 
 
     def choose_tile_color(self, i: float, j: float) -> tuple[int, int, int]:
         """choose tile color based on its position
@@ -130,4 +135,11 @@ class View:
             y_pos = move[0] * (Consts.BLOCK_SIZE + Consts.GAP) + starting_y + (Consts.BLOCK_SIZE * .25)
             
             pg.draw.rect(self.display, (235,222,52,50),(x_pos, y_pos, 30, 30), border_radius=10)
-            
+    
+    def switch_turn(self, turn):
+        self.message = "Blue player's turn" if turn == 0 else "Red player's turn"
+    
+    def draw_status(self):
+        pg.draw.rect(self.display, (235, 235, 235), (20, 400, 250, 75))
+        message = Consts.sub_title_font.render(self.message, True, 10)
+        self.display.blit(message, (20, 420)) 
