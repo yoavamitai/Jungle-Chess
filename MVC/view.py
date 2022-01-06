@@ -113,10 +113,10 @@ class View:
         
         # Check if the mouse position is outside the board
         if x < 0 or y < 0:
-            return None
+            return (-1, -1)
         
         if x > (Consts.COLS) or y > (Consts.ROWS):
-            return None
+            return (-1, -1)
         
         return (int(x),int(y))
     
@@ -153,4 +153,14 @@ class View:
         """
         pg.draw.rect(self.display, (235, 235, 235), (20, 400, 250, 75))
         message = Consts.sub_title_font.render(self.message, True, 10)
-        self.display.blit(message, (20, 420)) 
+        self.display.blit(message, (20, 420))
+    
+    def draw_win_message(self, player) -> None:
+        """Draw the winning player to the screen.
+
+        Args:
+            player (str): Color of winning player.
+        """
+        color = (59, 142, 165) if player == "Blue" else (171, 52, 40)
+        points = [(350, 200), (650, 200), (750, 400), (450, 400)]
+        pg.draw.polygon(self.display, color, points)

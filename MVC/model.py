@@ -317,10 +317,19 @@ class Model:
         self.turn = 0 if self.turn == 1 else 1
 
     def is_win(self):
+        winning_player = ''
+        is_win = False
         # Check win for blue player
         if self.game_board[0, 3] > 0 or (self.game_board >= 0).all():
             print('blue win')
+            is_win = True
+            winning_player = 'Blue'
+            
         
         # Check win for red player
         if self.game_board[8, 3] < 0 or (self.game_board <= 0).all():
             print('red win')
+            is_win = True
+            winning_player = 'Red'
+        
+        return (is_win, winning_player)

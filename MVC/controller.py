@@ -90,20 +90,28 @@ class Controller:
             else:
                 # Handle click on screen, not on quit button
                 col, row = self.view.mouse_to_board(mouse_loc) # Get row and column selected
-                print(f'col: {col}, row: {row}')
-                
-                if self.model.is_choosing_current_move((row, col)):
-                    self.model.perform_move(self.model.selected_game_piece, (row, col))
-                    self.view.draw_board(self.model.game_board)
-                    self.model.moves = []
-                    self.model.selected_game_piece = None
-                    self.model.is_win()
-                    self.model.switch_turn()
-                    self.view.switch_turn(self.model.turn)                 
+                if col == row == -1:
+                    pass
                 else:
-                    if self.model.is_selecting_valid_game_piece((row, col)):
-                        self.model.moves = self.model.get_possible_moves((row, col))
-                        print(f'possible moves: {self.model.moves}')
-                        self.model.selected_game_piece = (row, col)
-                        self.view.draw_possible_moves(self.model.moves)
-                        
+                    print(f'col: {col}, row: {row}')
+                    
+                    if self.model.is_choosing_current_move((row, col)):
+                        self.model.perform_move(self.model.selected_game_piece, (row, col))
+                        self.view.draw_board(self.model.game_board)
+                        self.model.moves = []
+                        self.model.selected_game_piece = None
+                        is_win = self.model.is_win()
+                        if is_win[0]:
+                            self.view.draw_win_message(is_win[1])
+                            time.sleep(15)
+                            # TODO: Reset game
+                        else:
+                            self.model.switch_turn()
+                            self.view.switch_turn(self.model.turn)                 
+                    else:
+                        if self.model.is_selecting_valid_game_piece((row, col)):
+                            self.model.moves = self.model.get_possible_moves((row, col))
+                            print(f'possible moves: {self.model.moves}')
+                            self.model.selected_game_piece = (row, col)
+                            self.view.draw_possible_moves(self.model.moves)
+                            
