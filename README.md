@@ -3,7 +3,7 @@
 > 
 
 <img style="float: left" src="https://ancientchess.com/graphics-rules/dou_shou_qi_jungle_game-board.jpg">
-This projects aims to implement the traditional Chinese game *Dou Shou Qi* (鬥獸棋, or Jungle Chess) using python, and adding a minimax algorithm as a basis for a computer-based opponent.
+This projects aims to implement the traditional Chinese game _Dou Shou Qi_ (鬥獸棋, or Jungle Chess) using python, and adding a minimax algorithm as a basis for a computer-based opponent.
 
 The project uses python libraries, such as:
  1. numPy
