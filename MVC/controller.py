@@ -16,7 +16,7 @@ class Controller:
         self.view: View = View()      
         self.use_pve = use_pve  # Should the game be played as a Player v AI (true), or Player v Player (false)
 
-        pg.event.set_blocked(pg.MOUSEMOTION)
+        pg.event.set_blocked([pg.MOUSEMOTION])
         self.main_loop()        # Call for main loop
     
     def main_loop(self):
@@ -27,8 +27,7 @@ class Controller:
                 self.pve_game_loop(self.model.turn)   # Call for PvE game logic
             else:
                 self.pvp_game_loop(self.model.turn)   # Call for PvP game logic
-            
-                
+                       
     def pve_game_loop(self, turn: int):
         """PvE game logic
 
@@ -66,10 +65,8 @@ class Controller:
             for event in pg.event.get():
                 ev_type = event.type
                 self.view.draw_board(self.model.game_board)
-                self.handle(ev_type)
-        
-        
-        
+                self.handle(ev_type) 
+     
     def handle(self, event):
         """handle events from pygame
 
@@ -85,7 +82,7 @@ class Controller:
             mouse_loc = pg.mouse.get_pos() # Get mouse position
             if self.view.close_button.is_over(mouse_loc):
                 # Handle game quit button click
-                pg.quit
+                pg.quit()
                 quit()
             else:
                 # Handle click on screen, not on quit button
@@ -102,9 +99,20 @@ class Controller:
                         self.model.selected_game_piece = None
                         is_win = self.model.is_win()
                         if is_win[0]:
-                            self.view.draw_win_message(is_win[1])
-                            time.sleep(15)
-                            # TODO: Reset game
+                            
+                            play_again_button, main_menu_button = self.view.draw_win_message(is_win[1])
+                            self.view.draw_board(self.model.game_board)
+                            while True:
+                                for event in pg.event.get():
+                                    if event.type == pg.MOUSEBUTTONDOWN:
+                                        if play_again_button.is_over(pg.mouse.get_pos()):
+                                            self.reset_game()
+                                            
+                                        elif main_menu_button.is_over(pg.mouse.get_pos()):
+                                            pass
+                                    if event == pg.QUIT:
+                                        pg.quit()
+                                        quit()
                         else:
                             self.model.switch_turn()
                             self.view.switch_turn(self.model.turn)                 
@@ -115,3 +123,7 @@ class Controller:
                             self.model.selected_game_piece = (row, col)
                             self.view.draw_possible_moves(self.model.moves)
                             
+    def reset_game(self):
+        self.model.reset()
+        self.view.reset()
+        self.main_loop()

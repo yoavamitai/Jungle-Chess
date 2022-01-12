@@ -221,25 +221,56 @@ class Model:
         
         else:
             for dir in directions_to_river:
-                if dir == (1, 0):
+                if dir == (-1, 0):
                     if self.game_board[3, pos[1]] == 0 and self.game_board[4, pos[1]] == 0 and self.game_board[5, pos[1]] == 0:
                         if self.is_self_rank_higher(rank, self.game_board[2, pos[1]]):
                             moves.append((2, pos[1]))
+                    if self.is_self_rank_higher(rank, self.game_board[pos[0], pos[1] - 1]):
+                        moves.append((pos[0], pos[1] - 1))
+                    
+                    if self.is_self_rank_higher(rank, self.game_board[pos[0], pos[1] + 1]):
+                        moves.append((pos[0], pos[1] + 1))
+                    
+                    if self.is_self_rank_higher(rank, self.game_board[pos[0] + 1, pos[1]]):
+                        moves.append((pos[0] + 1, pos[1]))
+                    
 
-                if dir == (-1, 0):
+                if dir == (1, 0):
                     if self.game_board[3, pos[1]] == 0 and self.game_board[4, pos[1]] == 0 and self.game_board[5, pos[1]] == 0:
                         if self.is_self_rank_higher(rank, self.game_board[6, pos[1]]):
                             moves.append((6, pos[1]))
+                    
+                    if self.is_self_rank_higher(rank, self.game_board[pos[0], pos[1] - 1]):
+                        moves.append((pos[0], pos[1] - 1))
+                    
+                    if self.is_self_rank_higher(rank, self.game_board[pos[0], pos[1] + 1]):
+                        moves.append((pos[0], pos[1] + 1))
+                    
+                    if self.is_self_rank_higher(rank, self.game_board[pos[0] - 1, pos[1]]):
+                        moves.append((pos[0] - 1, pos[1]))
                 
                 if dir == (0, -1):
                     if self.game_board[pos[0], pos[1] - 1] == 0 and self.game_board[pos[0], pos[1] - 2] == 0:
                         if self.is_self_rank_higher(rank, self.game_board[pos[0], pos[1] - 3]):
                             moves.append((pos[0], pos[1] - 3))
+                    
+                    if self.is_self_rank_higher(rank, self.game_board[pos[0] - 1, pos[1]]):
+                        moves.append((pos[0] - 1, pos[1]))
+                    
+                    if self.is_self_rank_higher(rank, self.game_board[pos[0] + 1, pos[1]]):
+                        moves.append((pos[0] + 1, pos[1]))
+                    
                 
                 if dir == (0, 1):
                     if self.game_board[pos[0], pos[1] + 1] == 0 and self.game_board[pos[0], pos[1] + 2] == 0:
                         if self.is_self_rank_higher(rank, self.game_board[pos[0], pos[1] + 3]):
                             moves.append((pos[0], pos[1] + 3))
+                    
+                    if self.is_self_rank_higher(rank, self.game_board[pos[0] - 1, pos[1]]):
+                        moves.append((pos[0] - 1, pos[1]))
+                    
+                    if self.is_self_rank_higher(rank, self.game_board[pos[0] + 1, pos[1]]):
+                        moves.append((pos[0] + 1, pos[1]))
         
         return moves
 
@@ -333,3 +364,19 @@ class Model:
             winning_player = 'Red'
         
         return (is_win, winning_player)
+    
+    def reset(self):
+        board = [[-7, 0, 0, 0, 0, 0, -6],
+                 [0,-4, 0, 0, 0, -2, 0],
+                 [-1, 0, -5, 0, -3, 0, -8],
+                 [0, 0, 0, 0, 0, 0, 0],
+                 [0, 0, 0, 0, 0, 0, 0],
+                 [0, 0, 0, 0, 0, 0, 0],
+                 [8, 0, 3, 0, 5, 0, 1],
+                 [0, 2, 0, 0, 0, 4, 0],
+                 [6, 0, 0, 0, 0, 0, 7]]
+        self.game_board = np.asarray(board, dtype=int)    # Turn board var into a numpy ndarray
+        self.moves = []
+        self.selected_game_piece = None
+        self.turn = 0
+        

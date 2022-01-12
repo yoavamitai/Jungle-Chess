@@ -161,6 +161,27 @@ class View:
         Args:
             player (str): Color of winning player.
         """
-        color = (59, 142, 165) if player == "Blue" else (171, 52, 40)
-        points = [(350, 200), (650, 200), (750, 400), (450, 400)]
-        pg.draw.polygon(self.display, color, points)
+        color = (37, 154, 232) if player == "Blue" else (232, 60, 37)
+        length = 300
+        pg.draw.rect(self.display, color, ((500 - (length / 2), 275 - (length / 2)), (length, length)), border_radius = 25)
+        message = Consts.message_font.render(f'{player} player won!', True, (235, 235, 235))
+        message_rect = message.get_rect(center=(500, 175))
+        self.display.blit(message, message_rect)
+        play_again_button = Button('#d4d4d4', 362, 230, 275, 70, 30, 'Play Again', font=Consts.button_font)
+        main_menu_button = Button('#d4d4d4',362, 340, 275, 70, 30, 'Return to Main Menu', font=Consts.button_font)
+        main_menu_button.draw(self.display)
+        play_again_button.draw(self.display)
+        
+        return play_again_button, main_menu_button
+    
+    def reset(self):
+        self.display = pg.display.set_mode((1000, 550), 0, 32)    # Initiate display
+
+        pg.display.update()    # Update display
+        time.sleep(0.01)
+        self.display.fill((235,235,235))    # Fill display in light-grey color
+
+        self.close_button: Button = Button("#B8C6DB", 20, 30, 75, 45, 
+                                   border_radius=50, text='close', font=Consts.button_font)    # Init close button
+        
+        self.message: str = "Blue player's turn"

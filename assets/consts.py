@@ -4,6 +4,7 @@ class Consts:
     button_font = pg.font.Font('assets/button_font.ttf', 30)
     main_title_font = pg.font.Font('assets/main_title_font.ttf', 50)
     sub_title_font = pg.font.Font('assets/main_title_font.ttf', 30)
+    message_font = pg.font.Font('assets/main_title_font.ttf', 35)
     label_font = pg.font.Font('assets/main_title_font.ttf', 15)
 
     grass_color = (107, 170, 117)
