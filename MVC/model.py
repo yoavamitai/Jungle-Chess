@@ -348,6 +348,11 @@ class Model:
         self.turn = 0 if self.turn == 1 else 1
 
     def is_win(self):
+        """Checks if there is a winner, according to the rules. 
+
+        Returns:
+            tuple(bool, str): tuple which contains bool if there is a win and a str which says which player won.
+        """
         winning_player = ''
         is_win = False
         # Check win for blue player
@@ -365,7 +370,9 @@ class Model:
         
         return (is_win, winning_player)
     
-    def reset(self):
+    def reset(self) -> None:
+        """Resets model to its initial state.
+        """
         board = [[-7, 0, 0, 0, 0, 0, -6],
                  [0,-4, 0, 0, 0, -2, 0],
                  [-1, 0, -5, 0, -3, 0, -8],
