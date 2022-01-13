@@ -188,4 +188,4 @@ class View:
         self.close_button: Button = Button("#B8C6DB", 20, 30, 75, 45, 
                                    border_radius=50, text='close', font=Consts.button_font)    # Init close button
         
-        self.message: str = "Blue player's turn"
+        self.message: str = "Blue player's turn"    
