@@ -34,20 +34,21 @@ class Controller:
         Args:
             turn (int): turn for blue player (0) or red player (1)
         """
+        self.view.draw_status()
         if turn == 0:
-            # turn for human player
+            # Turn for blue player
             for event in pg.event.get():
-                ev_type = event.type
-                self.view.draw_board(self.model.game_board)     # Draw the board post-turn change
+                ev_type = event.type    # Get event type
+                self.view.draw_board(self.model.game_board)    # Draw the board
                 self.handle(ev_type)    # Handle event
-
-        elif turn == 1:
-            # turn for AI
-            time.sleep(0.2)
-            # TODO: perform move
-        
-        #pg.display.update()
-        self.view.clock.tick(Consts.FPS)
+                
+        if turn == 1:
+            # Turn for red player
+            self.view.draw_board(self.model.game_board)     # Draw the board
+            # TODO: Choose random game piece
+            r = None
+            c = None
+            self.turn_logic_ai(r, c)
 
     def pvp_game_loop(self, turn: int):
         self.view.draw_status()
@@ -102,6 +103,31 @@ class Controller:
                 self.model.selected_game_piece = (row, col)     # Update selected game piece in the model component.
                 self.view.draw_possible_moves(self.model.moves) # Draw new moves to the board using the view component            
     
+    def turn_logic_ai(self, row, col):
+        self.model.perform_move(self.model.selected_game_piece, (row, col))
+        self.view.draw_board(self.model.game_board)
+        self.model.moves = [] 
+        self.model.selected_game_piece = None
+        is_win = self.model.is_win()
+        if is_win[0]:       # Check if there is a win
+            play_again_button, main_menu_button = self.view.draw_win_message(is_win[1])         # Draw win message a retrieve refrences to both buttons.
+            self.view.draw_board(self.model.game_board)         # Draw updated board
+            while True:     # Create new event listener for new buttons.
+                for event in pg.event.get():
+                    if event.type == pg.MOUSEBUTTONDOWN:
+                        if play_again_button.is_over(pg.mouse.get_pos()):
+                            self.reset_game()
+                            
+                        elif main_menu_button.is_over(pg.mouse.get_pos()):
+                            pass
+                    if event == pg.QUIT:
+                        pg.quit()
+                        quit()
+        else:       # If there is no winner
+            self.model.switch_turn()        # Switch the turn, for Blue to Red and vice versa
+            self.view.switch_turn(self.model.turn)      # Switch the turn message in the view component     
+    
+              
     def handle(self, event):
         """handle events from pygame
 
