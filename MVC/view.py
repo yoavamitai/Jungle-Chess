@@ -24,6 +24,7 @@ class View:
                                    border_radius=50, text='close', font=Consts.button_font)    # Init close button
         
         self.message: str = "Blue player's turn"
+        pg.event.set_blocked([pg.MOUSEMOTION])
         
             
     def draw_board(self, pieces: np.ndarray) -> None:
@@ -173,7 +174,8 @@ class View:
         play_again_button.draw(self.display)   # Draw play again button
         
         return play_again_button, main_menu_button      # Return refrences to both buttons.
-    
+            
+
     def reset(self):
         """Reset the view component to its initial state.
         """

@@ -1,5 +1,7 @@
 import numpy as np
 from assets.consts import Consts
+
+
 class Model:
     def __init__(self) -> None:
         board = [[-7, 0, 0, 0, 0, 0, -6],
@@ -339,9 +341,6 @@ class Model:
         self.game_board[selected_move[0], selected_move[1]] = self.game_board[start_place[0], start_place[1]]
         self.game_board[start_place[0], start_place[1]] = 0
         
-    def undo_move(self, game_piece):
-        pass
-    
     def switch_turn(self) -> None:
         """Switch turn from 0 (Blue) to 1 (Red) and vice versa.
         """
@@ -385,5 +384,4 @@ class Model:
         self.game_board = np.asarray(board, dtype=int)    # Turn board var into a numpy ndarray
         self.moves = []
         self.selected_game_piece = None
-        self.turn = 0
-        
+        self.turn = 0  
