@@ -3,7 +3,7 @@ from MVC.view import View
 import time
 import pygame as pg
 from assets.consts import Consts
-
+import random
 
 class Controller:
     def __init__(self, use_pve: bool) -> None:
@@ -45,10 +45,11 @@ class Controller:
         if turn == 1:
             # Turn for red player
             self.view.draw_board(self.model.game_board)     # Draw the board
-            # TODO: Choose random game piece
-            r = None
-            c = None
-            self.turn_logic_ai(r, c)
+            pieces = self.model.get_available_pieces()
+            self.model.selected_game_piece = random.choice(pieces)
+            avail_moves = self.model.get_possible_moves(self.model.selected_game_piece)
+            move = random.choice(avail_moves)
+            self.turn_logic_ai(move[0], move[1])
 
     def pvp_game_loop(self, turn: int):
         self.view.draw_status()
@@ -161,3 +162,4 @@ class Controller:
         self.model.reset()
         self.view.reset()
         self.main_loop()
+    

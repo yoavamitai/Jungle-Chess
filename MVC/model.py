@@ -384,4 +384,13 @@ class Model:
         self.game_board = np.asarray(board, dtype=int)    # Turn board var into a numpy ndarray
         self.moves = []
         self.selected_game_piece = None
-        self.turn = 0  
+        self.turn = 0
+    
+    def get_available_pieces(self):
+        pieces = []
+        for i in range(9):
+            for j in range(7):
+                if self.game_board[i, j] < 0:
+                    pieces.append((i,j))
+        return pieces
+    
