@@ -24,7 +24,7 @@ class View:
                                    border_radius=50, text='close', font=Consts.button_font)    # Init close button
         
         self.message: str = "Blue player's turn"
-        pg.event.set_blocked([pg.MOUSEMOTION])
+        pg.event.set_blocked([pg.MOUSEMOTION, pg.FINGERUP])
         
             
     def draw_board(self, pieces: np.ndarray) -> None:

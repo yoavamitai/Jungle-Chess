@@ -16,7 +16,7 @@ class Controller:
         self.view: View = View()      
         self.use_pve = use_pve  # Should the game be played as a Player v AI (true), or Player v Player (false)
 
-        pg.event.set_blocked([pg.MOUSEMOTION])
+        pg.event.set_blocked([pg.MOUSEMOTION, pg.FINGERUP])
         self.main_loop()        # Call for main loop
     
     def main_loop(self):
@@ -140,7 +140,7 @@ class Controller:
             pg.quit()
             quit()
         
-        elif event == pg.MOUSEBUTTONDOWN:
+        elif event in (pg.MOUSEBUTTONDOWN, pg.FINGERDOWN):
             mouse_loc = pg.mouse.get_pos() # Get mouse position
             if self.view.close_button.is_over(mouse_loc):
                 # Handle game quit button click
