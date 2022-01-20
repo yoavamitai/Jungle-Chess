@@ -85,6 +85,7 @@ RANK_DEVELOPMENT = {
         [25,30,50,9999,50,30,25]]
     
 }
+
 class Move:
     def __init__(self, start: COORDINATES, target: COORDINATES):
         """Represents a general move which can be performed and reverted on different boards
@@ -155,6 +156,14 @@ def is_win(board, player: str) -> bool:
     return False
 
 def score_rank(rank) -> int:
+    """Returns the score given to each piece on the AI's side and on the opponent's side.
+
+    Args:
+        rank (int): rank to score.
+
+    Returns:
+        int: score given.
+    """
     if rank == 1:
         return -500
     elif rank == 2:
@@ -191,7 +200,17 @@ def score_rank(rank) -> int:
         return 0
 
 def score_position(row, col, rank):
-    pass
+    """Returns a score of a specific piece given its position on the board
+
+    Args:
+        row (int): row of current piece
+        col ([type]): col of current piece
+        rank ([type]): rank of current piece
+
+    Returns:
+        int: given score.
+    """
+    return RANK_DEVELOPMENT[rank][row][col]
 
 def evaluate(board: list[int, int], row: int, col: int) -> float:
     """Score a given board after move
@@ -212,4 +231,7 @@ def evaluate(board: list[int, int], row: int, col: int) -> float:
             for col in range(7):
                 if board[row, col] != 0:
                     score += score_rank(board[row, col])
-    
+                    if board[row, col] < 0:
+                        score += score_position(row, col, abs(board[row, col]))
+                    elif board[row, col] > 0:
+                        score -= score_position(9 - row, col, board[row, col])
