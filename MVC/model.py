@@ -1,6 +1,6 @@
 import numpy as np
 from assets.consts import Consts
-
+from math import inf
 
 class Model:
     def __init__(self) -> None:
@@ -17,6 +17,109 @@ class Model:
         self.moves = []
         self.selected_game_piece = None
         self.turn = 0
+        
+        # Minimax Consts
+        self.COORDINATES = tuple[int, int]
+        self.RANK_DEVELOPMENT = {
+            1: np.array([[8,8,8,0,8,8,8], 
+                [8,8,8,9,9,9,9],
+                [8,8,8,9,10,10,10],
+                [8,9,9,10,12,12,11],
+                [8,9,9,11,12,12,12],
+                [8,9,9,11,12,12,13],
+                [10,11,11,13,13,13,13],
+                [11,12,13,50,13,13,13],
+                [11,13,50, 9999, 50, 13, 13]]),
+            
+            2: np.array([[8,8,8,0,8,8,8], 
+                [13,10,8,8,8,8,8],
+                [10,10,10,8,8,8,8],
+                [10,0,0,8,0,0,8],
+                [10,0,0,8,0,0,8],
+                [10,0,0,10,0,0,8],
+                [10,11,11,15,11,11,10],
+                [11,11,15,50,13,11,11],
+                [11,15,50,9999,50,15,11]]),
+            
+            3: np.array([[8,12,12,0,8,8,8],
+                [8,12,13,8,8,8,8],
+                [8,8,10,8,8,8,8],
+                [8,0,0,8,0,0,8],
+                [8,0,0,8,0,0,8],
+                [9,0,0,10,0,0,9],
+                [10,11,15,11,10,9],
+                [10,11,15,50,15,11,10],
+                [11,15,50,9999, 50,15,11]]),
+            
+            4: np.array([[8,8,8,0,12,12,8],
+                [8,8,8,8,13,10,8],
+                [8,8,8,8,8,8,8],
+                [8,0,0,8,0,0,8],
+                [8,0,0,8,0,0,8],
+                [9,0,0,10,0,0,9],
+                [10,11,15,50,12,11,10],
+                [11,15,50,9999, 50,15,11]]),
+            
+            5: np.array([[9,9,9,0,9,9,9],
+                [9,9,9,9,9,9,9],
+                [9,9,9,10,10,9,9],
+                [10,0,0,13,0,0,10],
+                [11,0,0,14,0,0,11],
+                [12,0,0,15,0,0,12],
+                [13,13,14,15,14,13,13],
+                [13,14,15,50,15,14,13],
+                [14,15,50,9999, 50,15,14]
+                ]),
+            
+            6: np.array([[10,12,12,0,12,12,10],
+                [12,14,12,12,12,12,12],
+                [14,16,16,14,16,16,14],
+                [15,0,0,15,0,0,15],
+                [15,0,0,15,0,0,15],
+                [15,0,0,15,0,0,15],
+                [18,20,20,30,20,20,18],
+                [25,25,30,50,30,25,25],
+                [25,30,50,9999,50,30,25]]),
+            
+            7: np.array([[10,12,12,0,12,12,10],
+                [12,14,12,12,12,12,12],
+                [14,16,16,14,16,16,14],
+                [15,0,0,15,0,0,15],
+                [15,0,0,15,0,0,15],
+                [15,0,0,15,0,0,15],
+                [18,20,20,30,20,20,18],
+                [25,25,30,50,30,25,25],
+                [25,30,50,9999,50,30,25]]),
+            
+            8: np.array([[11,11,11,0,11,11,11],
+                [11,11,11,11,11,11,11],
+                [10,15,14,14,14,14,12],
+                [12,0,0,12,0,0,12],
+                [14,0,0,14,0,0,14],
+                [16,0,0,16,0,0,16],
+                [18,20,20,30,20,20,18],
+                [25,25,30,50,30,25,25],
+                [25,30,50,9999,50,30,25]])
+            
+        }
+        self.RANK_SCORE = {
+            1: -500,
+            2: -200,
+            3: -300,
+            4: -400,
+            5: -500,
+            6: -800,
+            7: -900,
+            8: -1000,
+            -1: 500,
+            -2: 200,
+            -3: 300,
+            -4: 400,
+            -5: 500,
+            -6: 800,
+            -7: 900,
+            -8: 1000,
+        }
     
     def is_outside_r_edge(self, pos_x: int) -> bool:
         """Checks if position X is outside the right edge of the board
@@ -394,3 +497,101 @@ class Model:
                     pieces.append((i,j))
         return pieces
     
+    
+    
+    # Minimax
+    
+    def is_win_for_player(board, player: str) -> bool:
+        """check if given player won the game
+
+        Args:
+            board (list[int, int]): given board
+            player (str): given player
+
+        Returns:
+            bool: did given player win the game
+        """
+        if player == 'Blue':
+            if board[0, 3] > 0 or (board >= 0).all():
+                return True
+        
+        if player == 'Red':
+            if board[8, 3] < 0 or (board <= 0).all():
+                return True
+        
+        return False
+
+    def score_rank(self, rank) -> int:
+        """Returns the score given to each piece on the AI's side and on the opponent's side.
+
+        Args:
+            rank (int): rank to score.
+
+        Returns:
+            int: score given.
+        """
+        return self.RANK_SCORE[rank]
+
+    def score_position(self, row, col, rank):
+        """Returns a score of a specific piece given its position on the board
+
+        Args:
+            row (int): row of current piece
+            col ([type]): col of current piece
+            rank ([type]): rank of current piece
+
+        Returns:
+            int: given score.
+        """
+        return self.RANK_DEVELOPMENT[rank][row, col]
+
+    def evaluate(self, board: list[int, int], row: int, col: int) -> float:
+        """Score a given board after move
+
+        Args:
+            board (list[int, int]): given board
+            row (int): row of moved piece
+            col (int): column of moved piece
+
+        Returns:
+            float: score
+        """
+        score = 0
+        if self.is_win_for_player(board, 'Red' if board[row, col] < 0 else 'Blue'):
+            score += 9999
+        else:
+            for row in range(9):
+                for col in range(7):
+                    if board[row, col] != 0:
+                        score += self.score_rank(board[row, col])
+                        if board[row, col] < 0:
+                            score += self.score_position(row, col, abs(board[row, col]))
+                        elif board[row, col] > 0:
+                            score -= self.score_position(9 - row, col, board[row, col])
+
+    def get_all_possible_moves(self, board, color):
+        moves = []
+        for row in range(9):
+            for col in range(7):
+                if color == 'Red' and board[row, col] < 0:
+                    targets = self.get_possible_moves((row, col))
+                    current_moves = [(row, col) + i for i in targets]
+                    moves.append(current_moves)
+                elif color == 'Blue' and board[row, col] > 0:
+                    targets = self.get_possible_moves((row, col))
+                    current_moves = [(row, col) + i for i in targets]
+                    moves.append(current_moves)
+        return moves
+                    
+
+    def minimax(self, board, color):
+        moves = self.get_all_possible_moves(board, color)
+        if len(moves) == 0:
+            return ()
+        
+        best_move = moves[0]
+        best_score = -inf
+        
+        if len(moves) > 1:
+            for move in moves:
+                pass
