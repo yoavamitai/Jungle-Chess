@@ -45,10 +45,11 @@ class Controller:
         if turn == 1:
             # Turn for red player
             self.view.draw_board(self.model.game_board)     # Draw the board
-            pieces = self.model.get_available_pieces()
-            self.model.selected_game_piece = random.choice(pieces)
-            avail_moves = self.model.get_possible_moves(self.model.selected_game_piece)
-            move = random.choice(avail_moves)
+            #pieces = self.model.get_available_pieces()
+            selected_move = self.model.minimax(self.model.game_board, 'Red')
+            self.model.selected_game_piece = selected_move.start
+            #avail_moves = self.model.get_possible_moves(self.model.selected_game_piece)
+            move = selected_move.target
             self.turn_logic_ai(move[0], move[1])
 
     def pvp_game_loop(self, turn: int):

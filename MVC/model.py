@@ -1,6 +1,7 @@
 import numpy as np
 from assets.consts import Consts
 from math import inf
+from MVC.minimax.minimax import Move
 
 class Model:
     def __init__(self) -> None:
@@ -21,7 +22,7 @@ class Model:
         # Minimax Consts
         self.COORDINATES = tuple[int, int]
         self.RANK_DEVELOPMENT = {
-            1: np.array([[8,8,8,0,8,8,8], 
+            1: [[8,8,8,0,8,8,8], 
                 [8,8,8,9,9,9,9],
                 [8,8,8,9,10,10,10],
                 [8,9,9,10,12,12,11],
@@ -29,9 +30,9 @@ class Model:
                 [8,9,9,11,12,12,13],
                 [10,11,11,13,13,13,13],
                 [11,12,13,50,13,13,13],
-                [11,13,50, 9999, 50, 13, 13]]),
+                [11,13,50, 9999, 50, 13, 13]],
             
-            2: np.array([[8,8,8,0,8,8,8], 
+            2: [[8,8,8,0,8,8,8], 
                 [13,10,8,8,8,8,8],
                 [10,10,10,8,8,8,8],
                 [10,0,0,8,0,0,8],
@@ -39,9 +40,9 @@ class Model:
                 [10,0,0,10,0,0,8],
                 [10,11,11,15,11,11,10],
                 [11,11,15,50,13,11,11],
-                [11,15,50,9999,50,15,11]]),
+                [11,15,50,9999,50,15,11]],
             
-            3: np.array([[8,12,12,0,8,8,8],
+            3: [[8,12,12,0,8,8,8],
                 [8,12,13,8,8,8,8],
                 [8,8,10,8,8,8,8],
                 [8,0,0,8,0,0,8],
@@ -49,18 +50,18 @@ class Model:
                 [9,0,0,10,0,0,9],
                 [10,11,15,11,10,9],
                 [10,11,15,50,15,11,10],
-                [11,15,50,9999, 50,15,11]]),
+                [11,15,50,9999, 50,15,11]],
             
-            4: np.array([[8,8,8,0,12,12,8],
+            4: [[8,8,8,0,12,12,8],
                 [8,8,8,8,13,10,8],
                 [8,8,8,8,8,8,8],
                 [8,0,0,8,0,0,8],
                 [8,0,0,8,0,0,8],
                 [9,0,0,10,0,0,9],
                 [10,11,15,50,12,11,10],
-                [11,15,50,9999, 50,15,11]]),
+                [11,15,50,9999, 50,15,11]],
             
-            5: np.array([[9,9,9,0,9,9,9],
+            5: [[9,9,9,0,9,9,9],
                 [9,9,9,9,9,9,9],
                 [9,9,9,10,10,9,9],
                 [10,0,0,13,0,0,10],
@@ -69,9 +70,9 @@ class Model:
                 [13,13,14,15,14,13,13],
                 [13,14,15,50,15,14,13],
                 [14,15,50,9999, 50,15,14]
-                ]),
+                ],
             
-            6: np.array([[10,12,12,0,12,12,10],
+            6: [[10,12,12,0,12,12,10],
                 [12,14,12,12,12,12,12],
                 [14,16,16,14,16,16,14],
                 [15,0,0,15,0,0,15],
@@ -79,9 +80,9 @@ class Model:
                 [15,0,0,15,0,0,15],
                 [18,20,20,30,20,20,18],
                 [25,25,30,50,30,25,25],
-                [25,30,50,9999,50,30,25]]),
+                [25,30,50,9999,50,30,25]],
             
-            7: np.array([[10,12,12,0,12,12,10],
+            7: [[10,12,12,0,12,12,10],
                 [12,14,12,12,12,12,12],
                 [14,16,16,14,16,16,14],
                 [15,0,0,15,0,0,15],
@@ -89,9 +90,9 @@ class Model:
                 [15,0,0,15,0,0,15],
                 [18,20,20,30,20,20,18],
                 [25,25,30,50,30,25,25],
-                [25,30,50,9999,50,30,25]]),
+                [25,30,50,9999,50,30,25]],
             
-            8: np.array([[11,11,11,0,11,11,11],
+            8: [[11,11,11,0,11,11,11],
                 [11,11,11,11,11,11,11],
                 [10,15,14,14,14,14,12],
                 [12,0,0,12,0,0,12],
@@ -99,7 +100,7 @@ class Model:
                 [16,0,0,16,0,0,16],
                 [18,20,20,30,20,20,18],
                 [25,25,30,50,30,25,25],
-                [25,30,50,9999,50,30,25]])
+                [25,30,50,9999,50,30,25]]
             
         }
         self.RANK_SCORE = {
@@ -497,11 +498,9 @@ class Model:
                     pieces.append((i,j))
         return pieces
     
-    
-    
     # Minimax
     
-    def is_win_for_player(board, player: str) -> bool:
+    def is_win_for_player(self, board, player) -> bool:
         """check if given player won the game
 
         Args:
@@ -543,9 +542,11 @@ class Model:
         Returns:
             int: given score.
         """
-        return self.RANK_DEVELOPMENT[rank][row, col]
+        
+        #print(self.RANK_DEVELOPMENT[rank])
+        return self.RANK_DEVELOPMENT[rank][row][col]
 
-    def evaluate(self, board: list[int, int], row: int, col: int) -> float:
+    def evaluate(self, board: list[int, int], color) -> float:
         """Score a given board after move
 
         Args:
@@ -557,7 +558,7 @@ class Model:
             float: score
         """
         score = 0
-        if self.is_win_for_player(board, 'Red' if board[row, col] < 0 else 'Blue'):
+        if self.is_win_for_player(board, color):
             score += 9999
         else:
             for row in range(9):
@@ -575,23 +576,97 @@ class Model:
             for col in range(7):
                 if color == 'Red' and board[row, col] < 0:
                     targets = self.get_possible_moves((row, col))
-                    current_moves = [(row, col) + i for i in targets]
-                    moves.append(current_moves)
+                    for target in targets:
+                        moves.append(Move((row, col), target))
                 elif color == 'Blue' and board[row, col] > 0:
                     targets = self.get_possible_moves((row, col))
-                    current_moves = [(row, col) + i for i in targets]
-                    moves.append(current_moves)
+                    for target in targets:
+                        moves.append(Move((row, col), target))
         return moves
-                    
-
+                
+    def next_color(self, color):
+        return 'Blue' if color is 'Red' else 'Red'
+    
+    def max_play(self, board, color, moves, depth, alpha, beta):
+        if self.is_win_for_player(board,color) or self.is_win_for_player(board, self.next_color(color)) or depth == 0:
+            return self.evaluate(board, color)
+        
+        best_score = -inf
+        
+        for move in moves:
+            move.perform(board)
+            
+            next_moves = self.get_all_possible_moves(board, color)
+            
+            score = self.min_play(board, self.next_color(color), next_moves, depth - 1, alpha, beta)
+            
+            move.revert(board)
+            print(f'score {type(score)}  best_score {type(best_score)}')
+            if score > best_score:
+                best_score = score
+            if best_score > alpha:
+                alpha = best_score
+            
+            if beta <= alpha:
+                break
+            
+            return best_score
+        
+    def min_play(self,board, color, moves, depth, alpha, beta):
+        if self.is_win_for_player(board, 'Blue') or self.is_win_for_player(board, 'Red') or depth == 0:
+            return self.evaluate(board, self.next_color(color))
+        
+        best_score = inf
+        for move in moves:
+            move.perform(board)
+            
+            next_moves = self.get_all_possible_moves(board, color)
+            
+            score = self.max_play(board, self.next_color(color), next_moves, depth - 1, alpha, beta)
+            
+            move.revert(board)
+            
+            if score < best_score:
+                best_score = score
+            
+            if best_score < beta:
+                beta = best_score
+            
+            if beta <= alpha:
+                break
+            
+            return best_score        
+        
     def minimax(self, board, color):
-        moves = self.get_all_possible_moves(board, color)
+        """Minimax algorithm
+
+        Args:
+            board (list(int, int)): board to perform move on
+            color (str): color of the player
+
+        Returns:
+            Move: selected move
+        """
+        moves: list(Move) = self.get_all_possible_moves(board, color)
         if len(moves) == 0:
             return ()
         
         best_move = moves[0]
         best_score = -inf
         
+        depth = 2
+        
         if len(moves) > 1:
             for move in moves:
-                pass
+                move.perform(board)
+                
+                next_moves = self.get_all_possible_moves(board, color)
+                
+                score = self.min_play(board, self.next_color(color), next_moves, depth, -inf, inf)
+                
+                move.revert(board)
+                
+                if score > best_score:
+                    best_score = score
+                    best_move = move
+        return best_move
