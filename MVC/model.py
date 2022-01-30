@@ -569,6 +569,8 @@ class Model:
                             score += self.score_position(row, col, abs(board[row, col]))
                         elif board[row, col] > 0:
                             score -= self.score_position(9 - row, col, board[row, col])
+        
+        return score
 
     def get_all_possible_moves(self, board, color):
         moves = []
