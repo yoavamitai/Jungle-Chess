@@ -1,9 +1,8 @@
 from MVC.model import Model
 from MVC.view import View
-import time
 import pygame as pg
 from assets.consts import Consts
-import random
+import numpy as np
 
 class Controller:
     def __init__(self, use_pve: bool) -> None:
@@ -45,8 +44,7 @@ class Controller:
         if turn == 1:
             # Turn for red player
             self.view.draw_board(self.model.game_board)     # Draw the board
-            #pieces = self.model.get_available_pieces()
-            selected_move = self.model.minimax(self.model.game_board, 'Red')
+            selected_move = self.model.find_best_move()
             self.model.selected_game_piece = selected_move.start
             #avail_moves = self.model.get_possible_moves(self.model.selected_game_piece)
             move = selected_move.target
@@ -107,6 +105,7 @@ class Controller:
     
     def turn_logic_ai(self, row, col):
         self.model.perform_move(self.model.selected_game_piece, (row, col))
+
         self.view.draw_board(self.model.game_board)
         self.model.moves = [] 
         self.model.selected_game_piece = None

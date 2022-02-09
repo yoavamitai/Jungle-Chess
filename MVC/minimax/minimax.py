@@ -14,7 +14,10 @@ class Move:
         self.target = target
         self.is_capturing = False
         self.captured = None
-    
+
+    def __str__(self) -> str:
+        return f'start: {self.start}, target: {self.target}'
+
     def __iter__(self) -> iter:
         return iter(self.start + self.target)
     
@@ -28,7 +31,6 @@ class Move:
         if board[self.target[0], self.target[1]] != 0:
             self.is_capturing = True
             self.captured = board[self.target[0], self.target[1]]
-            board[self.target[0], self.target[1]] = 0
         
         # Move piece
         tmp = board[self.start[0], self.start[1]]
@@ -42,12 +44,13 @@ class Move:
             board (list[int, int]): given game board
         """
         
-        # Revert capture
-        if self.is_capturing:
-            board[self.target[0], self.target[1]] = self.captured
         
         # Revert piece Movement
         tmp = board[self.start[0], self.start[1]]
         board[self.start[0], self.start[1]] = board[self.target[0], self.target[1]]
         board[self.target[0], self.target[1]] = tmp
+        
+        # Revert capture
+        if self.is_capturing:
+            board[self.target[0], self.target[1]] = self.captured
           

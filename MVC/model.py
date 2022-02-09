@@ -1,7 +1,11 @@
+from math import inf
+from pickle import bytes_types
+
 import numpy as np
 from assets.consts import Consts
-from math import inf
+
 from MVC.minimax.minimax import Move
+
 
 class Model:
     def __init__(self) -> None:
@@ -16,6 +20,7 @@ class Model:
                  [6, 0, 0, 0, 0, 0, 7]]
         self.game_board = np.asarray(board, dtype=int)    # Turn board var into a numpy ndarray
         self.moves = []
+        self.count = 0
         self.selected_game_piece = None
         self.turn = 0
         
@@ -30,7 +35,7 @@ class Model:
                 [8,9,9,11,12,12,13],
                 [10,11,11,13,13,13,13],
                 [11,12,13,50,13,13,13],
-                [11,13,50, 9999, 50, 13, 13]],
+                [11,13,50,9999,50,13,13]],
             
             2: [[8,8,8,0,8,8,8], 
                 [13,10,8,8,8,8,8],
@@ -121,6 +126,7 @@ class Model:
             -7: 900,
             -8: 1000,
         }
+
     
     def is_outside_r_edge(self, pos_x: int) -> bool:
         """Checks if position X is outside the right edge of the board
@@ -510,12 +516,15 @@ class Model:
         Returns:
             bool: did given player win the game
         """
+
         if player == 'Blue':
             if board[0, 3] > 0 or (board >= 0).all():
+                print('return true - BLUE')
                 return True
         
         if player == 'Red':
             if board[8, 3] < 0 or (board <= 0).all():
+                print('return true - RED')
                 return True
         
         return False
@@ -542,8 +551,6 @@ class Model:
         Returns:
             int: given score.
         """
-        
-        #print(self.RANK_DEVELOPMENT[rank])
         return self.RANK_DEVELOPMENT[rank][row][col]
 
     def evaluate(self, board: list[int, int], color) -> float:
@@ -567,9 +574,8 @@ class Model:
                         score += self.score_rank(board[row, col])
                         if board[row, col] < 0:
                             score += self.score_position(row, col, abs(board[row, col]))
-                        elif board[row, col] > 0:
-                            score -= self.score_position(9 - row, col, board[row, col])
-        
+                        
+        print(score)
         return score
 
     def get_all_possible_moves(self, board, color):
@@ -584,46 +590,46 @@ class Model:
                     targets = self.get_possible_moves((row, col))
                     for target in targets:
                         moves.append(Move((row, col), target))
+        #print(f'possible moves: {[str(m) for m in moves]}')
         return moves
                 
     def next_color(self, color):
         return 'Blue' if color is 'Red' else 'Red'
     
     def max_play(self, board, color, moves, depth, alpha, beta):
-        if self.is_win_for_player(board,color) or self.is_win_for_player(board, self.next_color(color)) or depth == 0:
+        if self.is_win_for_player(board, 'Red') or self.is_win_for_player(board, 'Blue') or depth == 0:
             return self.evaluate(board, color)
-        
         best_score = -inf
         
         for move in moves:
             move.perform(board)
-            
+            self.count += 1
             next_moves = self.get_all_possible_moves(board, color)
-            
+            print(f'len: {len(next_moves)}, depth: {depth}')
             score = self.min_play(board, self.next_color(color), next_moves, depth - 1, alpha, beta)
             
             move.revert(board)
-            print(f'score {type(score)}  best_score {type(best_score)}')
             if score > best_score:
                 best_score = score
-            if best_score > alpha:
-                alpha = best_score
+            # if best_score > alpha:
+            #     alpha = best_score
             
-            if beta <= alpha:
-                break
+            # if beta <= alpha:
+            #     break
             
             return best_score
         
     def min_play(self,board, color, moves, depth, alpha, beta):
-        if self.is_win_for_player(board, 'Blue') or self.is_win_for_player(board, 'Red') or depth == 0:
+        if self.is_win_for_player(board, 'Red') or self.is_win_for_player(board, 'Blue') or depth == 0:
             return self.evaluate(board, self.next_color(color))
         
         best_score = inf
         for move in moves:
             move.perform(board)
-            
+            self.count += 1
             next_moves = self.get_all_possible_moves(board, color)
-            
+            print(f'len: {len(next_moves)}, depth: {depth}')
+
             score = self.max_play(board, self.next_color(color), next_moves, depth - 1, alpha, beta)
             
             move.revert(board)
@@ -631,11 +637,11 @@ class Model:
             if score < best_score:
                 best_score = score
             
-            if best_score < beta:
-                beta = best_score
+            # if best_score < beta:
+            #     beta = best_score
             
-            if beta <= alpha:
-                break
+            # if beta <= alpha:
+            #     break
             
             return best_score        
         
@@ -649,6 +655,7 @@ class Model:
         Returns:
             Move: selected move
         """
+        
         moves: list(Move) = self.get_all_possible_moves(board, color)
         if len(moves) == 0:
             return ()
@@ -656,12 +663,12 @@ class Model:
         best_move = moves[0]
         best_score = -inf
         
-        depth = 2
+        depth = 700
         
         if len(moves) > 1:
             for move in moves:
                 move.perform(board)
-                
+                self.count += 1
                 next_moves = self.get_all_possible_moves(board, color)
                 
                 score = self.min_play(board, self.next_color(color), next_moves, depth, -inf, inf)
@@ -671,4 +678,41 @@ class Model:
                 if score > best_score:
                     best_score = score
                     best_move = move
+        print(f'start: {best_move.start} target: {best_move.target}')
+        print(f'count: {self.count}')
+        return best_move
+
+    def negamax(self, board, color, depth, alpha, beta, turn_m):
+        if self.is_win_for_player(board, 'Red') or self.is_win_for_player(board, 'Blue') or depth == 0:
+            return turn_m * self.evaluate(board, color), None
+        
+        current_moves = self.get_all_possible_moves(board, color)
+        best_score = -inf
+        best_move = current_moves[0]
+        
+        if len(current_moves) > 1:
+            for move in current_moves:
+                move.perform(board)
+
+                score, recommended_move = self.negamax(board, self.next_color(color), depth - 1, -beta, -alpha, -turn_m)
+                score *= -1
+
+                if score > best_score:
+                    best_score = score
+                    best_move = move
+                
+                move.revert(board)
+
+                if best_score > alpha:
+                    alpha = best_score
+            
+                if beta <= alpha:
+                    break
+        
+
+        return best_score, best_move
+
+    def find_best_move(self):
+        
+        score, best_move = self.negamax(self.game_board, 'Red', 1, -inf, inf, 1)
         return best_move
