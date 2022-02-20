@@ -66,7 +66,8 @@ class View:
                     
                     piece_text = Consts.button_font.render(str(abs(pieces[j, i])), True, (235, 235, 235)) # render game piece text
                     self.display.blit(piece_text, piece_text.get_rect(center=piece.center)) # blit game piece text to the center of the piece circle            
-
+    
+    
     def choose_tile_color(self, i: float, j: float) -> tuple[int, int, int]:
         """choose tile color based on its position
 
@@ -90,7 +91,10 @@ class View:
         if (i % 3 != 0) and (j > 2 and j < 6):
             return Consts.river_color
         
-        return Consts.grass_color
+        #Grass Color
+        col = i + j
+        color = tuple(np.subtract(Consts.grass_color, (3*col, 3*col, 3*col)))
+        return color
 
     def mouse_to_board(self, pos: tuple(int, int)) -> tuple(int, int):
         """Convert mouse position of type tuple(x, y) to tuple(column, row) on board.

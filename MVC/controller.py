@@ -103,13 +103,19 @@ class Controller:
                 self.model.selected_game_piece = (row, col)     # Update selected game piece in the model component.
                 self.view.draw_possible_moves(self.model.moves) # Draw new moves to the board using the view component            
     
-    def turn_logic_ai(self, row, col):
-        self.model.perform_move(self.model.selected_game_piece, (row, col))
+    def turn_logic_ai(self, row: int, col: int) -> None:
+        """Turn Logic for AI Player.
 
-        self.view.draw_board(self.model.game_board)
-        self.model.moves = [] 
-        self.model.selected_game_piece = None
-        is_win = self.model.is_win()
+        Args:
+            row (int): selected row for move
+            col (int): selected col for move
+        """
+        self.model.perform_move(self.model.selected_game_piece, (row, col)) # Perform selected move in the model component
+
+        self.view.draw_board(self.model.game_board) # Update the board in the view component
+        self.model.moves = [] # Reset the available moves list
+        self.model.selected_game_piece = None # Reset the selected game piece
+        is_win = self.model.is_win() # Check if there is a win and store the data
         if is_win[0]:       # Check if there is a win
             play_again_button, main_menu_button = self.view.draw_win_message(is_win[1])         # Draw win message a retrieve refrences to both buttons.
             self.view.draw_board(self.model.game_board)         # Draw updated board
@@ -144,6 +150,7 @@ class Controller:
             mouse_loc = pg.mouse.get_pos() # Get mouse position
             if self.view.close_button.is_over(mouse_loc):
                 # Handle game quit button click
+                self.model.save_cache()
                 pg.quit()
                 quit()
             else:
@@ -152,14 +159,12 @@ class Controller:
                 if col == row == -1:
                     pass
                 else:
-                    print(f'col: {col}, row: {row}')
-                    
-                    self.turn_logic_human(row, col)
+                    self.turn_logic_human(row, col) # Run the Human Player turn logic using selected rowand col from click.
                             
     def reset_game(self) -> None:
         """Resets the game to its initial state and restarts the game loop.
         """
-        self.model.reset()
-        self.view.reset()
-        self.main_loop()
+        self.model.reset() # Reset Model component
+        self.view.reset()  # Reset View Component
+        self.main_loop()   # Restart controller loop
     

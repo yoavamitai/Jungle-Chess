@@ -3,7 +3,7 @@ COORDINATES = tuple[int, int]
 
 
 class Move:
-    def __init__(self, start: COORDINATES, target: COORDINATES):
+    def __init__(self, start: COORDINATES, target: COORDINATES, can_capture: bool):
         """Represents a general move which can be performed and reverted on different boards
 
         Args:
@@ -12,6 +12,7 @@ class Move:
         """
         self.start = start
         self.target = target
+        self.can_capture = can_capture
         self.is_capturing = False
         self.captured = None
 
