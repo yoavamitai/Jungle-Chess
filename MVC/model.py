@@ -5,7 +5,6 @@ import time
 from MVC.minimax.minimax import Move
 from pathlib import Path
 import csv
-import hashlib
 
 
 class Model:
@@ -37,7 +36,7 @@ class Model:
         # Minimax Consts
         self.COORDINATES = tuple[int, int]
         self.RANK_DEVELOPMENT = {
-            1: [[8,8,8,0,8,8,8], 
+            1: [[8,8,8,-9999,8,8,8], 
                 [8,8,8,9,9,9,9],
                 [8,8,8,9,10,10,10],
                 [8,9,9,10,12,12,11],
@@ -47,7 +46,7 @@ class Model:
                 [11,12,13,50,13,13,13],
                 [11,13,50,9999,50,13,13]],
             
-            2: [[8,8,8,0,8,8,8], 
+            2: [[8,8,8,-9999,8,8,8], 
                 [13,10,8,8,8,8,8],
                 [10,10,10,8,8,8,8],
                 [10,0,0,8,0,0,8],
@@ -57,17 +56,17 @@ class Model:
                 [11,11,15,50,13,11,11],
                 [11,15,50,9999,50,15,11]],
             
-            3: [[8,12,12,0,8,8,8],
+            3: [[8,12,12,-9999,8,8,8],
                 [8,12,13,8,8,8,8],
                 [8,8,10,8,8,8,8],
                 [8,0,0,8,0,0,8],
                 [8,0,0,8,0,0,8],
                 [9,0,0,10,0,0,9],
-                [10,11,15,11,10,9],
+                [9,10,11,15,11,10,9],
                 [10,11,15,50,15,11,10],
                 [11,15,50,9999, 50,15,11]],
             
-            4: [[8,8,8,0,12,12,8],
+            4: [[8,8,8,-9999,12,12,8],
                 [8,8,8,8,13,10,8],
                 [8,8,8,8,8,8,8],
                 [8,0,0,8,0,0,8],
@@ -75,9 +74,9 @@ class Model:
                 [9,0,0,10,0,0,9],
                 [9, 10, 11, 15, 11, 10, 9],
                 [10,11,15,50,12,11,10],
-                [11,15,50,9999, 50,15,11]],
+                [11,15,50,9999,50,15,11]],
             
-            5: [[9,9,9,0,9,9,9],
+            5: [[9,9,9,-9999,9,9,9],
                 [9,9,9,9,9,9,9],
                 [9,9,9,10,10,9,9],
                 [10,0,0,13,0,0,10],
@@ -85,10 +84,9 @@ class Model:
                 [12,0,0,15,0,0,12],
                 [13,13,14,15,14,13,13],
                 [13,14,15,50,15,14,13],
-                [14,15,50,9999, 50,15,14]
-                ],
+                [14,15,50,9999, 50,15,14]],
             
-            6: [[10,12,12,0,12,12,10],
+            6: [[10,12,12,-9999,12,12,10],
                 [12,14,12,12,12,12,12],
                 [14,16,16,14,16,16,14],
                 [15,0,0,15,0,0,15],
@@ -98,7 +96,7 @@ class Model:
                 [25,25,30,50,30,25,25],
                 [25,30,50,9999,50,30,25]],
             
-            7: [[10,12,12,0,12,12,10],
+            7: [[10,12,12,-9999,12,12,10],
                 [12,14,12,12,12,12,12],
                 [14,16,16,14,16,16,14],
                 [15,0,0,15,0,0,15],
@@ -108,7 +106,7 @@ class Model:
                 [25,25,30,50,30,25,25],
                 [25,30,50,9999,50,30,25]],
             
-            8: [[11,11,11,0,11,11,11],
+            8: [[11,11,11,-9999,11,11,11],
                 [11,11,11,11,11,11,11],
                 [10,15,14,14,14,14,12],
                 [12,0,0,12,0,0,12],
@@ -142,6 +140,7 @@ class Model:
         with open(self.cache_path, 'w') as f:
             for key in self.cache.keys():
                 f.write("%s,%s\n"%(key, self.cache[key])) 
+    
     def is_outside_r_edge(self, pos_x: int) -> bool:
         """Checks if position X is outside the right edge of the board
 
@@ -589,9 +588,9 @@ class Model:
         else:
             for row in range(9):
                 for col in range(7):
-                    if board[row, col] != 0:
+                    if board[row, col] < 0:
                         score += self.score_rank(board[row, col])
-                        score += self.score_position(8 - row if color is 'Red' else row, col, abs(board[row, col]))
+                        score += self.score_position(row, col, abs(board[row, col]))
         return score
     
     def score_move(self, move: Move, board) -> int:
@@ -629,7 +628,6 @@ class Model:
             return score
         sorted_moves = sorted(moves, key=sorter, reverse= flag) # Sort moves by inner sorting function
         return sorted_moves
-
 
     def get_all_possible_moves(self, board, color):
         """Get all possible moves for every piece of selected color.
@@ -695,14 +693,22 @@ class Model:
         best_move = current_moves[0]
         
         if len(current_moves) > 1:
+            # Heuristics
+            if depth == Consts.DEPTH:
+                for move in current_moves:
+                    if move.can_capture:
+                        best_move = move
+                        return best_score, best_move
+            
             for move in current_moves:
                 move.perform(board)
                 
-                board_code = ''.join(str(item) for row in board for item in row)
-                hash_code = hashlib.sha1(board_code.encode())
+                board_code = '.'.join(str(item) for row in board for item in row)
                 score = 0
-                if hash_code.hexdigest() in self.cache:
-                    cache_score = float(self.cache[hash_code.hexdigest()])
+                
+
+                if board_code in self.cache:
+                    cache_score = float(self.cache[board_code])
                     if cache_score > 0 and color == "Red":
                         score = cache_score
                     elif cache_score < 0 and color == "Red":
@@ -713,9 +719,9 @@ class Model:
                         score = -1 * cache_score
                 else:
                     score, recommended_move = self.negamax(board, self.next_color(color), depth - 1, -beta, -alpha, -turn_m)
-                    score += 0 if move.can_capture is False else 2500
+                    score += 0 if move.can_capture is False else (5000 * depth)
                     score *= -1
-                    self.cache[hash_code.hexdigest()] = score
+                    self.cache[board_code] = score
 
                 if score > best_score:
                     best_score = score
@@ -739,7 +745,8 @@ class Model:
             Move: selected move by Negamax Algorithm.
         """
         start = time.perf_counter()
-        score, best_move = self.negamax(self.game_board, 'Red', 9, -inf, inf, 1)
+
+        score, best_move = self.negamax(self.game_board, 'Red', Consts.DEPTH, -inf, inf, 1)
         end = time.perf_counter()
         print(f'negamax finished in {end - start:0.4f} sec')
         return best_move

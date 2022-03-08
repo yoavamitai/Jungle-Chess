@@ -117,7 +117,7 @@ class Controller:
         self.model.selected_game_piece = None # Reset the selected game piece
         is_win = self.model.is_win() # Check if there is a win and store the data
         if is_win[0]:       # Check if there is a win
-            play_again_button, main_menu_button = self.view.draw_win_message(is_win[1])         # Draw win message a retrieve refrences to both buttons.
+            play_again_button, quit_button = self.view.draw_win_message(is_win[1])         # Draw win message a retrieve refrences to both buttons.
             self.view.draw_board(self.model.game_board)         # Draw updated board
             while True:     # Create new event listener for new buttons.
                 for event in pg.event.get():
@@ -125,8 +125,9 @@ class Controller:
                         if play_again_button.is_over(pg.mouse.get_pos()):
                             self.reset_game()
                             
-                        elif main_menu_button.is_over(pg.mouse.get_pos()):
-                            pass
+                        elif quit_button.is_over(pg.mouse.get_pos()):
+                            pg.quit()
+                            quit()
                     if event == pg.QUIT:
                         pg.quit()
                         quit()

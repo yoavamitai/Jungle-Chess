@@ -6,13 +6,15 @@ from assets.button import Button
 import time
 from assets.consts import Consts
 import numpy as np
-
+from pygame import gfxdraw as gfx
+import math
 
 class View:
     def __init__(self) -> None:
         """Init view component"""
 
         pg.init()
+        pg.display.set_caption('Dou Shou Qi')
         self.clock: pg.time.Clock = pg.time.Clock()    # Init Clock
         self.display = pg.display.set_mode((1000, 550), 0, 32)    # Initiate display
 
@@ -26,7 +28,7 @@ class View:
         self.message: str = "Blue player's turn"
         pg.event.set_blocked([pg.MOUSEMOTION, pg.FINGERUP])
         
-            
+    
     def draw_board(self, pieces: np.ndarray) -> None:
         """Draw the board tiles and the pieces on the board
 
@@ -47,7 +49,8 @@ class View:
         for j in range(Consts.ROWS):
             y = starting_y + j * (Consts.BLOCK_SIZE + Consts.GAP)   # Current Y position
             for i in range(Consts.COLS):
-                x = starting_x + i * (Consts.BLOCK_SIZE + Consts.GAP)   # Current X position
+                x = starting_x + i * (Consts.BLOCK_SIZE + Consts.GAP)   # Current X 
+                
                 pg.draw.rect(self.display, 
                 self.choose_tile_color(i, j), 
                 (x, y, Consts.BLOCK_SIZE, Consts.BLOCK_SIZE), border_radius= 10)    # Draw tile
@@ -60,12 +63,16 @@ class View:
                 x = starting_x + i * (Consts.BLOCK_SIZE + Consts.GAP)   # calculate piece x position
                 if pieces[j, i] != 0:   # check if element in array is not null (null == 0), but a game piece
                     # draw game piece circle
-                    piece = pg.draw.circle(self.display,
-                                   (208, 0, 0) if pieces[j,i] < 0 else (0, 180, 216),
-                                   (x + Consts.BLOCK_SIZE // 2, y + Consts.BLOCK_SIZE // 2), Consts.BLOCK_SIZE // 2.25)     # Draw tile
                     
+                    color = (208, 0, 0) if pieces[j,i] < 0 else (0, 180, 216)
+                    x_pos = int(x + Consts.BLOCK_SIZE // 2)
+                    y_pos = int(y + Consts.BLOCK_SIZE // 2)
+                    r = int(Consts.BLOCK_SIZE // 2.25)
+
+                    gfx.filled_circle(self.display, x_pos, y_pos, r, color)
+                    piece = gfx.aacircle(self.display, x_pos, y_pos, r, color)
                     piece_text = Consts.button_font.render(str(abs(pieces[j, i])), True, (235, 235, 235)) # render game piece text
-                    self.display.blit(piece_text, piece_text.get_rect(center=piece.center)) # blit game piece text to the center of the piece circle            
+                    self.display.blit(piece_text, piece_text.get_rect(center=(x_pos, y_pos))) # blit game piece text to the center of the piece circle            
     
     
     def choose_tile_color(self, i: float, j: float) -> tuple[int, int, int]:
@@ -173,11 +180,11 @@ class View:
         message_rect = message.get_rect(center=(500, 175))      # Set message position
         self.display.blit(message, message_rect)        # Draw message content
         play_again_button = Button('#d4d4d4', 362, 230, 275, 70, 30, 'Play Again', font=Consts.button_font)         # Create play again button, which resets the game
-        main_menu_button = Button('#d4d4d4',362, 340, 275, 70, 30, 'Return to Main Menu', font=Consts.button_font)  # Create return to main menu button
-        main_menu_button.draw(self.display) # Draw main menu button
+        quit_button = Button('#d4d4d4',362, 340, 275, 70, 30, 'Quit Game', font=Consts.button_font)  # Create return to main menu button
+        quit_button.draw(self.display) # Draw main menu button
         play_again_button.draw(self.display)   # Draw play again button
         
-        return play_again_button, main_menu_button      # Return refrences to both buttons.
+        return play_again_button, quit_button      # Return refrences to both buttons.
             
 
     def reset(self):
