@@ -91,6 +91,7 @@ class Controller:
                                         elif main_menu_button.is_over(pg.mouse.get_pos()):
                                             pass
                                     if event == pg.QUIT:
+                                        self.model.save_cache()
                                         pg.quit()
                                         quit()
                         else:       # If there is no winner
@@ -126,9 +127,11 @@ class Controller:
                             self.reset_game()
                             
                         elif quit_button.is_over(pg.mouse.get_pos()):
+                            self.model.save_cache()
                             pg.quit()
                             quit()
                     if event == pg.QUIT:
+                        self.model.save_cache()
                         pg.quit()
                         quit()
         else:       # If there is no winner
@@ -144,6 +147,7 @@ class Controller:
         """
         if event is pg.QUIT:
             # Handle OS quit button click
+            self.model.save_cache()
             pg.quit()
             quit()
         

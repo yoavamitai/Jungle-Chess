@@ -684,6 +684,12 @@ class Model:
             int, Move: best score and best move.
         """
         if self.is_win_for_player(board, 'Red') or self.is_win_for_player(board, 'Blue') or depth == 0:
+            if self.is_win_for_player(board, 'Red') or self.is_win_for_player(board, 'Blue'):
+                print('found win!')
+                board_code = ','.join(str(item) for row in board for item in row)
+                if board_code not in self.cache:
+                    print('insert win entry')
+                    self.cache[board_code] = 'WIN'
             return turn_m * self.evaluate(board, color), None
         
         current_moves = self.get_all_possible_moves(board, color)
@@ -703,7 +709,7 @@ class Model:
             for move in current_moves:
                 move.perform(board)
                 
-                board_code = '.'.join(str(item) for row in board for item in row)
+                board_code = ','.join(str(item) for row in board for item in row)
                 score = 0
                 
 

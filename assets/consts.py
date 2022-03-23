@@ -22,4 +22,4 @@ class Consts:
     DIRECTIONS = [(-1, 0), (1, 0), (0, -1), (0, 1)]
 
 
-    DEPTH = 7
+    DEPTH = 8
